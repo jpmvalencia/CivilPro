@@ -1,0 +1,112 @@
+/*INICIO DE LOS ESTILOS*/
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+#cover {
+    background: #9BA4B5 center center no-repeat;
+    background-size: cover;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#cover-caption {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+   
+    
+}
+#fondo{
+    background: #394867;
+}
+
+.margen {
+    margin: 10px;
+}
+
+.user-img {
+    margin-top: -85px;
+    margin-bottom: 35px;
+}
+
+.user-img img {
+    width: 160px;
+    height: 160px;
+    box-shadow: 0px 0px 3px #394867;
+    border-radius: 50%;
+}
+
+.form-group input{
+    border: 2px solid #394867;
+    height: 42px;
+    font-size: 18px;
+    /* border: 0px; */
+    padding-left: 54px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #394867;
+    box-shadow: 0 0 8px 0 #394867;
+}
+
+body{
+    font-family: "Poppins", sans-serif;
+
+}
+
+.form-group::before{
+
+    font-family: "Font Awesome\ 5 Free";
+    color:  #394867;
+    position: absolute;
+    left: 32px;
+    font-size: 22px;
+    padding-top: 4px;
+} 
+
+ .form-group#user-group::before{
+    content: "\f007";
+}
+
+.form-group#pass-group::before{
+    content: "\f023";
+}
+
+/* only used for background overlay not needed for centering */
+form:before {
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.3);
+    z-index: -1;
+    border-radius: 10px;
+    box-shadow: 0px 0px 3px #394867;
+}
+
+button{
+    width: 60%;
+    margin: 5px 0 25px;
+}
+
+.forgot{
+    padding: 10px 0;
+}
+
+.forgot a{
+    color: white;
+}
+
