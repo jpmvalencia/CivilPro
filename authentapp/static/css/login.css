@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box
+}
+
+body {
+    background-color: #eee;
+    font-family: 'Poppins', sans-serif;
+    background:  #212A3E;
+   
+}
+
+.wrapper {
+    max-width: 500px;
+    border-radius: 10px;
+    margin: 50px auto;
+    padding: 30px 40px;
+    margin-top: 120px;
+}
+
+
+.h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #212A3E;
+}
+
+.h4 {
+    font-family: 'Poppins', sans-serif;
+    color: #212A3E;
+}
+
+.input-field {
+    border-radius: 5px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #212A3E;
+    color: #212A3E
+}
+
+.input-field:hover {
+    color: #394867;
+    border: 1px solid #394867
+}
+
+input {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    width: 100%;
+    padding: 0px 2px;
+    font-family: 'Poppins', sans-serif
+}
+
+.fa-eye-slash.btn {
+    border: none;
+    outline: none;
+    box-shadow: none
+}
+
+a {
+    text-decoration: none;
+    color: #212A3E;
+    font-weight: 700
+}
+
+a:hover {
+    text-decoration: none;
+    color: #394867
+}
+
+.option {
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer
+}
+
+.option label.text-muted {
+    display: block;
+    cursor: pointer
+}
+
+.option input {
+    display: none
+}
+
+.checkmark {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    border-radius: 50%;
+    cursor: pointer
+}
+
+.option input:checked~.checkmark:after {
+    display: block
+}
+
+.option .checkmark:after {
+    content: "";
+    width: 13px;
+    height: 13px;
+    display: block;
+    background: #212A3E;
+    position: absolute;
+    top: 48%;
+    left: 53%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 300ms ease-in-out 0s
+}
+
+.option input[type="radio"]:checked~.checkmark {
+    background: #fff;
+    transition: 300ms ease-in-out 0s;
+    border: 1px solid #212A3E
+}
+
+.option input[type="radio"]:checked~.checkmark:after {
+    transform: translate(-50%, -50%) scale(1)
+}
+
+.btn.btn-block {
+    border-radius: 20px;
+    background-color: #212A3E;
+    color: #fff
+}
+
+.btn.btn-block:hover {
+    background-color: #394867
+}
+
+@media(max-width: 575px) {
+    .wrapper {
+        margin: 10px
+    }
+}
+
+@media(max-width:424px) {
+    .wrapper {
+        padding: 30px 10px;
+        margin: 5px
+    }
+
+    .option {
+        position: relative;
+        padding-left: 22px
+    }
+
+    .option label.text-muted {
+        font-size: 0.95rem
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 2px
+    }
+
+    .option .checkmark:after {
+        top: 50%
+    }
+
+    #forgot {
+        font-size: 0.95rem
+    }
+}
