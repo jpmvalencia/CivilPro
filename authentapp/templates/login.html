@@ -21,7 +21,8 @@
             <div class="input-field"> <span class="far fa-user p-2"></span> <input type="text" placeholder="Correo electrónico" required class=""> </div>
         </div>
         <div class="form-group py-1 pb-2">
-            <div class="input-field"> <span class="fas fa-lock p-2"></span> <input type="text" placeholder="Contraseña" required class=""> <button class="btn bg-white text-muted"> <span class="far fa-eye-slash"></span> </button> </div>
+            <div class="input-field"> <span class="fas fa-lock p-2"></span> <input id="passwordField" type="password" placeholder="Contraseña" required class=""> 
+            <button id="togglePassword" type="button" class="btn bg-white text-muted"> <span class="far fa-eye-slash"></span> </button> </div>
         </div>
         <div class="d-flex align-items-start">
             <div class="remember"> <label class="option text-muted"> Recordar <input type="radio" name="radio"> <span class="checkmark"></span> </label> </div>
@@ -30,6 +31,17 @@
         <div class="text-center pt-3 text-muted">¿No tienes cuenta? <a href="#signup.html">Regístrate</a></div>
     </form>
 </div>
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('passwordField');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.querySelector('span').classList.toggle('fa-eye-slash');
+        this.querySelector('span').classList.toggle('fa-eye');
+    });
+</script>
     <script type='text/javascript'></script>
 </body>
 </html>
