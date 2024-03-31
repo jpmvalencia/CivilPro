@@ -15,76 +15,84 @@
 <body class="form-v10">
 	<div class="page-content">
 		<div class="form-v10-content">
-			<form class="form-detail" action="#" method="post" id="myform">
+			<form class="form-detail" method="post" id="myform">
+				{% csrf_token %}
 				<div class="form-left">
 					<h2>Registro de Usuario</h2>
 					<div class="form-group">
 						<div class="form-row form-row-1">
-							<input type="text" name="first_name" id="first_name" class="input-text" placeholder="Nombre" required>
+							<input type="text" name="first_name" id="first_name" class="input-text" placeholder="Nombre" value="{{ data.first_name }}" required>
 						</div>
 						<div class="form-row form-row-2">
-							<input type="text" name="last_name" id="last_name" class="input-text" placeholder="Apellido" required>
+							<input type="text" name="last_name" id="last_name" class="input-text" placeholder="Apellido" value="{{ data.last_name }}" required>
 						</div>
 					</div>
-					<div class="form-row">
-						<select name="title">
-						    <option class="option" value="title">Título</option>
-						    <option class="option" value="businessman">Ingeniero</option>
-						    <option class="option" value="reporter">Otra ingenieria diferente</option>
-						    <option class="option" value="secretary">Arquimedes de Siracusa</option>
-						</select>
-						<span class="select-btn">
-						  	<i class="zmdi zmdi-chevron-down"></i>
-						</span>
-					</div>
-					<div class="form-row">
-						<input type="text" name="doc_id" class="doc_id" id="doc_id" placeholder="Número de Documento" required>
+					<div class="form-row scroll-container">
+						<p>Seleccione sus especializaciones:</p>
+						{% for titulo in titulos_disponibles %}
+							<div class="form-checkbox">
+								<label class="container">
+									<p>{{ titulo.nombre }}</p>
+									<input type="checkbox" name="titles[]" value="{{ titulo.nombre }}">
+									<span class="checkmark"></span>
+								</label>
+							</div>
+						{% endfor %}
 					</div>
 					<div class="form-group">
 						<div class="form-row form-row-1">
-							<input type="password" name="password" id="password" class="password" placeholder="Contraseña" required>
+							<input type="password" name="password" id="password" class="password" placeholder="Contraseña" value="{{ data.password }}" required>
 						</div>
 						<div class="form-row form-row-2">
-							<input type="password" name="repassword" id="repassword" class="repassword" placeholder="Repetir Contraseña" required>
+							<input type="password" name="repassword" id="repassword" class="repassword" placeholder="Repetir Contraseña" value="{{ data.repassword }}" required>
 						</div>
 					</div>
 				</div>
 				<div class="form-right">
 					<h2></h2>
-					<div class="form-row">
-						<select name="country">
-						    <option value="country">País</option>
-						    <option value="Vietnam">Vietnam</option>
-						    <option value="Malaysia">Malaysia</option>
-						    <option value="India">India</option>
-						</select>
-						<span class="select-btn">
-						  	<i class="zmdi zmdi-chevron-down"></i>
-						</span>
-					</div>
 					<div class="form-group">
 						<div class="form-row form-row-1">
-							<input type="text" name="code" class="code" id="code" placeholder="+" required>
+							<input type="text" name="code" class="code" id="code" placeholder="+" value="{{ data.code }}" required>
 						</div>
 						<div class="form-row form-row-2">
-							<input type="text" name="phone" class="phone" id="phone" placeholder="Número de Teléfono" required>
+							<input type="text" name="phone" class="phone" id="phone" placeholder="Número de Teléfono" value="{{ data.phone }}" required>
 						</div>
 					</div>
 					<div class="form-row">
-						<input type="text" name="your_email" id="your_email" class="input-text" required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" placeholder="Correo Electronico">
+						<input type="text" name="your_email" id="your_email" class="input-text" value="{{ data.your_email }}" required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" placeholder="Correo Electronico">
 					</div>
-					<div class="form-checkbox">
-						<label class="container"><p>I do accept the <a href="#" class="text">Terms and Conditions</a> of your site.</p>
-						  	<input type="checkbox" name="checkbox">
-						  	<span class="checkmark"></span>
-						</label>
+					<div class="form-row">
+						<input type="text" name="doc_id" class="doc_id" id="doc_id" placeholder="Número de Documento" value="{{ data.doc_id }}" required>
 					</div>
+					
 					<div class="form-row-last">
 						<input type="submit" name="register" class="register" value="Registrar">
 					</div>
+					<h2></h2>
 				</div>
 			</form>
 		</div>
 	</div>
+	<script>
+		var errorMessage = "{{ error }}";
+		if (errorMessage) {
+			alert(errorMessage);
+		}
+	
+		document.getElementById("myform").addEventListener("submit", function(event) {
+			var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+			var alMenosUnoSeleccionado = false;
+			
+			checkboxes.forEach(function(checkbox) {
+				if (checkbox.checked) {
+					alMenosUnoSeleccionado = true;
+				}
+			});
+			if (!alMenosUnoSeleccionado) {
+				alert('Por favor, seleccione al menos un título.');
+				event.preventDefault(); // Evitar el envío del formulario solo si no se han seleccionado títulos
+			}
+		});
+	</script>
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 </html>
