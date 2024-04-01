@@ -1,8 +1,16 @@
 from django.shortcuts import render, redirect
+from django.contrib import auth
 from .models import Usuario, Titulo, UsuarioTitulo
 
 def login(request):
-    return render(request, 'login.html')
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    else:
+        user = auth.authenticate(request, username=request.POST['email'], password=request.POST['password'])
+        if user is None:
+            return render(request, 'login.html', {'error': 'El usuario o contraseña es incorrecto.', 'data': request.POST})
+        auth.login(request, user)
+        return redirect(home)
 
 # Create your views here.
 def home(request):
@@ -31,6 +39,7 @@ def signup(request):
                         id_usuario=user, id_titulo=titulo
                         )
                 print(request.POST)
+                auth.login(request, user)
                 return redirect('../login')
             except:
                 return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all(), 'error': 'Ya existe un usuario registrado con ese correo.', 'data': request.POST})
