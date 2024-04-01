@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import auth
+
+from homeapp.views import home
 from .models import Usuario, Titulo, UsuarioTitulo
 
 def login(request):
@@ -13,8 +15,6 @@ def login(request):
         return redirect(home)
 
 # Create your views here.
-def home(request):
-    return render(request, 'home.html')
 
 def signup(request):
     if request.method == 'GET':
