@@ -16,12 +16,13 @@
     <body  class='snippet-body'>
     <div class="wrapper bg-white col-xl-5 col-lg-6 col-md-8 col-sm-8 mx-auto">
     <div class="h2 text-center">Inicia Sesión</div>
-    <form class="pt-3">
+    <form class="pt-3" method="POST">
+        {% csrf_token %}
         <div class="form-group py-2">
-            <div class="input-field"> <span class="far fa-user p-2"></span> <input type="text" placeholder="Correo electrónico" required class=""> </div>
+            <div class="input-field"> <span class="far fa-user p-2"></span> <input type="text" placeholder="Correo electrónico" name="email" value="{{ data.email }}" required class=""> </div>
         </div>
         <div class="form-group py-1 pb-2">
-            <div class="input-field"> <span class="fas fa-lock p-2"></span> <input id="passwordField" type="password" placeholder="Contraseña" required class=""> 
+            <div class="input-field"> <span class="fas fa-lock p-2"></span> <input id="passwordField" type="password" placeholder="Contraseña" name="password" value="{{ data.password }}" required class=""> 
             <button id="togglePassword" type="button" class="btn bg-white text-muted"> <span class="far fa-eye-slash"></span> </button> </div>
         </div>
         <div class="d-flex align-items-start">
@@ -43,5 +44,11 @@
     });
 </script>
     <script type='text/javascript'></script>
+    <script>
+        var errorMessage = "{{ error }}";
+		if (errorMessage) {
+			alert(errorMessage);
+		}
+    </script>
 </body>
 </html>
