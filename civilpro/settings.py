@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,3 +134,16 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authentapp.Usuario'
+
+JAZZMIN_SETTINGS = {
+    'site_header': 'CivilPro',
+    'site_brand': 'CivilPro',
+    'site_title': 'CivilPro',
+    'site_logo': '/assets/img/CivilPro_Logo_W.png',
+    'login_logo': '/assets/img/CivilPro_Logo_B_admin.png',
+    'welcome_sign': 'Bienvenido a la administración de CivilPro',
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+}
