@@ -8,9 +8,18 @@ class Usuario(AbstractUser):
     telefono = models.CharField(max_length=20)
     #nacimiento = models.DateField
 
+    def __str__(self):
+        return self.first_name + " " + self.last_name if (self.username != 'admin') else 'admin'
+
 class Titulo(models.Model):
     nombre = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.nombre
 
 class UsuarioTitulo(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     id_titulo = models.ForeignKey(Titulo, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id_usuario.username + " - " + self.id_titulo.nombre
