@@ -19,3 +19,7 @@ def home(request):
             return redirect(home)
         except:
             return render(request, 'home.html', {'error': 'Ingresa datos válidos.'})
+
+def proyectos_info(request):
+
+    return render(request, 'proyectos-info.html')
