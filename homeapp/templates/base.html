@@ -1,0 +1,152 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivilPro | {% block title %}{% endblock %}</title>
+    <script src="https://kit.fontawesome.com/fb4d809d7a.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        input,
+        textarea {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+            border-bottom: 1px solid #F1F6F9 !important;
+        }
+
+        .bg-annapolis-blue {
+            background: #394867 !important;
+        }
+
+        .bg-distant-horizon {
+            background: #F1F6F9 !important;
+        }
+
+        .bg-midnight-express {
+            background: #212A3E !important;
+        }
+
+        .text-annapolis-blue {
+            color: #394867 !important;
+        }
+
+        .text-distant-horizon {
+            color: #F1F6F9 !important;
+        }
+
+        .text-midnight-express {
+            color: #212A3E !important;
+        }
+
+        .rounded-10 {
+            border-radius: 10px !important;
+        }
+
+        .zoom-out {
+            transition: transform 0.2s;
+            transform: scale(1.0);
+        }
+
+        .zoom-in:hover {
+            transform: scale(1.1);
+        }
+
+        /* body nav.navbar div.container {
+            transition: padding 0.2s;
+        } */
+    </style>
+</head>
+
+<body class="bg-midnight-express text-distant-horizon">
+    <nav class="navbar navbar-expand-lg py-4 sticky-top bg-midnight-express text-distant-horizon">
+        <div class="container" id="navbar">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'assets/img/CivilPro_Logo_W.png' %}" alt="CivilPro" style="height: 80px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars text-distant-horizon"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active text-distant-horizon" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-distant-horizon" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-distant-horizon" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu bg-annapolis-blue">
+                            <li><a class="dropdown-item text-distant-horizon" href="#">Action</a></li>
+                            <li><a class="dropdown-item text-distant-horizon" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-distant-horizon" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2 text-distant-horizon" type="search" placeholder="Buscar"
+                        aria-label="Search">
+                    <button class="btn bg-annapolis-blue text-distant-horizon" type="submit">Buscar</button>
+                </form>
+                <div class="d-flex justify-content-center">
+                    <a href="">
+                        <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 64px;">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main style="top: 128px;">
+        {% block content %}
+        {% endblock %}
+    </main>
+    <div class="container">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="col-md-4 d-flex align-items-center">
+                <span class="text-muted">2024 CivilPro&trade;</span>
+            </div>
+
+            <a href="/">
+                <img src="{% static 'assets/img/CivilPro_Logo_W.png' %}" alt="CivilPro" style="height: 50px;">
+            </a>
+
+            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                <li class="ms-3">
+                    <a class="text-muted" href="mailto:contact@civilpro.org">contact@civilpro.org</a>
+                </li>
+                <li class="ms-3"><a class="text-muted" href="mailto:contact@civilpro.org"><i
+                            class="fa-regular fa-envelope"></i></a></li>
+            </ul>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <!-- <script>
+        window.onscroll = function () {
+            var navbar = document.getElementById('navbar');
+            var isScrolled = document.documentElement.scrollTop > 1;
+            navbar.classList.toggle('p-5', !isScrolled);
+            navbar.classList.toggle('py-3', isScrolled);
+        }
+    </script> -->
+</body>
+
+</html>
