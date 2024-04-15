@@ -6,7 +6,7 @@
     <!-- Button trigger modal -->
     <div class="text-center">
         {% for proyecto in proyectos %}
-        <a class="m-1" href="#" data-bs-toggle="modal" data-bs-target="#projectModal"
+        <a class="m-1" href="#" data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}"
             style="color: inherit; text-decoration: inherit; display: inline-block;">
             <div class="card text-center bg-midnight-express rounded-10 zoom-in zoom-out" style="width: 18rem;">
                 <div style="width: 100%; height: 180px;">
@@ -23,7 +23,7 @@
     </div>
     <!-- Modal -->
     {% for proyecto in proyectos %}
-    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+    <div class="modal fade" id="item_{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl modal-fullscreen-lg-down">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
@@ -77,39 +77,14 @@
                                             <i class="fa-solid fa-plus"></i>
                                         </button>
                                     </div>
-                                    <ul class="list-group overflow-auto" style="max-height: 200px;">
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario</div>
-                                            Ingeniero Civil
-                                        </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario2</div>
-                                            Ingeniero en venta de quipitos.
-                                        </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario</div>
-                                            Ingeniero Civil
-                                        </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario2</div>
-                                            Ingeniero en venta de quipitos.
-                                        </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario</div>
-                                            Ingeniero Civil
-                                        </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario2</div>
-                                            Ingeniero en venta de quipitos.
-                                        </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario</div>
-                                            Ingeniero Civil
-                                        </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">Usuario2</div>
-                                            Ingeniero en venta de quipitos.
-                                        </li>
+                                    {% for usuario in usuarios %}
+                                    {% if proyecto == usuario.id_proyecto %}
+                                    <li class="list-group-item border-0 bg-transparent text-distant-horizon">
+                                        <div class="fw-bold">{{ usuario.id_usuario.first_name }}</div>
+                                        Ingeniero Civil
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
                                     </ul>
                                 </div>
                             </div>
@@ -120,7 +95,8 @@
         </div>
     </div>
     {% endfor %}
-    <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out" href="/" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
+    <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out"
+        href="/" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
         <i class="fa-solid fa-plus"></i>
     </a>
 </div>
