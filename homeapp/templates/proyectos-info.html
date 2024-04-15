@@ -4,26 +4,30 @@
 
 <div class="container p-5 bg-annapolis-blue rounded-10" style="min-width: 80vw; min-height: 83vh;">
     <!-- Button trigger modal -->
-    <a href="#" data-bs-toggle="modal" data-bs-target="#projectModal"
-        style="color: inherit; text-decoration: inherit; display: inline-block;">
-        <div class="card text-center bg-midnight-express rounded-10 zoom-in zoom-out" style="width: 18rem;">
-            <div style="width: 100%; height: 180px;">
-                <img src="https://img.4plebs.org/boards/pol/image/1685/15/1685159872624558.jpg" class="card-img-top"
-                    alt="yugiweed" style="height: 180px; object-fit: cover;">
+    <div class="text-center">
+        {% for proyecto in proyectos %}
+        <a class="m-1" href="#" data-bs-toggle="modal" data-bs-target="#projectModal"
+            style="color: inherit; text-decoration: inherit; display: inline-block;">
+            <div class="card text-center bg-midnight-express rounded-10 zoom-in zoom-out" style="width: 18rem;">
+                <div style="width: 100%; height: 180px;">
+                    <img src="https://img.4plebs.org/boards/pol/image/1685/15/1685159872624558.jpg" class="card-img-top"
+                        alt="yugiweed" style="height: 180px; object-fit: cover;">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">{{ proyecto.nombre }}</h5>
+                    <p class="card-text">{{ proyecto.descripcion }}</p>
+                </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title text-uppercase">yugiweed</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                    the card's content.</p>
-            </div>
-        </div>
-    </a>
+        </a>
+        {% endfor %}
+    </div>
     <!-- Modal -->
+    {% for proyecto in proyectos %}
     <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl modal-fullscreen-lg-down">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
-                    <h2 class="modal-title text-capitalize" id="projectModalLabel">Modal title</h2>
+                    <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.nombre }}</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -44,26 +48,31 @@
                             <div class="col-lg-5">
                                 <div class="row">
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
-                                        <h2 class="fw-bolder fs-4 lh-base">Información del proyecto</h2>
+                                        <h3 class="fw-bolder fs-4 lh-base">Información del proyecto</h3>
                                         <button type="button" class="btn">
-                                            <i class="fa-solid fa-pen-to-square text-distant-horizon zoom-in zoom-out"></i>
+                                            <i
+                                                class="fa-solid fa-pen-to-square text-distant-horizon zoom-in zoom-out"></i>
                                         </button>
                                     </div>
                                     <ul class="list-group">
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Constructora: </span>Frisby</li>
+                                                class="fw-bold">Constructora: </span>{{ proyecto.constructora.nombre }}
+                                        </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Fecha de inicio: </span>hoy</li>
+                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.fecha_inicio }}</li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Decha de finalización: </span>mañana</li>
+                                                class="fw-bold">Fecha de finalización: </span>{{ proyecto.fecha_final }}
+                                        </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Presupuesto: </span>gratis</li>
+                                                class="fw-bold">Presupuesto: </span>{{ proyecto.presupuesto }}</li>
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
+                                                class="fw-bold">Estado: </span>{{ proyecto.estado }}</li>
                                     </ul>
                                 </div>
                                 <hr>
                                 <div class="row">
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
-                                        <h2 class="fw-bolder fs-4 lh-base">Personal</h2>
+                                        <h3 class="fw-bolder fs-4 lh-base">Personal</h3>
                                         <button type="button" class="btn text-distant-horizon zoom-in zoom-out">
                                             <i class="fa-solid fa-plus"></i>
                                         </button>
@@ -110,6 +119,7 @@
             </div>
         </div>
     </div>
+    {% endfor %}
 </div>
 
 {% endblock %}
