@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 
-from homeapp.models import Proyecto
+from .models import Proyecto
 
 # Create your views here.
 def home(request):
@@ -21,5 +21,5 @@ def home(request):
             return render(request, 'home.html', {'error': 'Ingresa datos válidos.'})
 
 def proyectos_info(request):
-
-    return render(request, 'proyectos-info.html')
+    proyectos = Proyecto.objects.all()
+    return render(request, 'proyectos-info.html', {'proyectos': proyectos})
