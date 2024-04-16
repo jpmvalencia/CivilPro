@@ -30,9 +30,7 @@ def nuevo_proyecto(request):
 def proyectos_info(request):
     proyecto_usuarios = ProyectoUsuario.objects.all()
     proyectos = Proyecto.objects.all()
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios})
-
-def perfil_usuario(request):
     usuario_actual = request.user
-    return render(request, 'perfil-usuario.html', {'usuario_actual': usuario_actual})
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
+
 
