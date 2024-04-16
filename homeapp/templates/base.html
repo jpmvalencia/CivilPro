@@ -48,6 +48,10 @@
             border-radius: 10px !important;
         }
 
+        .dropdown-item:hover {
+            background: #212A3E !important;
+        }
+
         .zoom-out {
             transition: transform 0.2s;
             transform: scale(1.0);
@@ -106,14 +110,23 @@
                     <button class="btn bg-annapolis-blue text-distant-horizon" type="submit">Buscar</button>
                 </form>
                 <div class="d-flex justify-content-center rounded-circle">
-                    <a href="">
-                        <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 64px;">
-                    </a>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-distant-horizon" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 64px;">
+                            </a>
+                            <ul class="dropdown-menu bg-annapolis-blue">
+                                <li><a class="dropdown-item text-distant-horizon" href="#">Mi Perfil</a></li>
+                                <li><a class="dropdown-item text-distant-horizon" href="#">Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </nav>
-    <main style="top: 128px;">
+    <main style="top: 128px; min-height: calc(100vh - 275px);">
         {% block content %}
         {% endblock %}
     </main>

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container p-5 bg-annapolis-blue rounded-10" style="min-width: 80vw; min-height: 83vh;">
+<div class="container p-5 bg-annapolis-blue rounded-10" style="min-height: calc(100vh - 275px);">
     <!-- Button trigger modal -->
     <div class="text-center">
         {% for proyecto in proyectos %}
@@ -96,7 +96,7 @@
     </div>
     {% endfor %}
     <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out"
-        href="/" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
+        href="/nuevo-proyecto" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
         <i class="fa-solid fa-plus"></i>
     </a>
 </div>

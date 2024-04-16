@@ -1,6 +1,6 @@
 {% load static  %}
+
 <!DOCTYPE html>
-{% if not user.is_authenticated %}
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -43,7 +43,11 @@
             <div class="container">
                 <div class="masthead-subheading">Bienvenido a CivilPro</div>
                 <div class="masthead-heading text-uppercase">Gestión de Proyectos</div>
+                {% if user.is_authenticated %}
+                <a class="btn btn-primary btn-xl text-uppercase" href="/proyectos">Ver mis proyectos</a>
+                {% else %}
                 <a class="btn btn-primary btn-xl text-uppercase" href="/login">Comenzar</a>
+                {% endif %}
             </div>
         </header>
         <!-- Services-->
@@ -610,73 +614,3 @@
         <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     </body>
 </html>
-{% else %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Proyecto</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        input, textarea {
-            background: transparent !important;
-            box-shadow: none !important;
-            border: none !important;
-            border-radius: 0 !important;
-            border-bottom: 1px solid #F1F6F9 !important;
-        }
-        .bg-annapolis-blue {
-            background: #394867 !important;
-        }
-        .bg-distant-horizon {
-            background: #F1F6F9 !important;
-        }
-        .bg-midnight-express {
-            background: #212A3E !important;
-        }
-        .text-annapolis-blue {
-            color: #394867 !important;
-        }
-        .text-distant-horizon {
-            color: #F1F6F9 !important;
-        }
-        .text-midnight-express {
-            color: #212A3E !important;
-        }
-        .rounded-10 {
-            border-radius: 10px !important;
-        }
-    </style>
-</head>
-<body class="bg-midnight-express text-distant-horizon">
-    <main>
-        <div class="container bg-annapolis-blue rounded-10 p-5" style="max-width: 800px; margin-top: 20vh; margin-bottom: 20vh;">
-            <form method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="title">Título del proyecto</label>
-                    <input type="text" name="title" id="title" class="form-control text-distant-horizon" autocomplete="off" required>
-                </div>
-                <div class="form-group">
-                    <label for="description">Descripción</label>
-                    <textarea name="description" id="description" class="form-control text-distant-horizon" placeholder="Agrega una descripción al proyecto." autocomplete="off" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="start-date">Fecha de inicio</label>
-                    <input type="date" name="start-date" id="start-date" class="form-control text-distant-horizon" required>
-                </div>
-                <div class="form-group">
-                    <label for="end-date">Fecha de finalización</label>
-                    <input type="date" name="end-date" id="end-date" class="form-control text-distant-horizon" required>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn bg-distant-horizon text-midnight-express">Crear proyecto</button>
-                </div>
-            </form>
-        </div>
-    </main>
-</body>
-</html>
-
-{% endif %}
