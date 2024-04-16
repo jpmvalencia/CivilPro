@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 
 from homeapp.views import proyectos_info
@@ -44,4 +45,8 @@ def signup(request):
             except:
                 return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all(), 'error': 'Ya existe un usuario registrado con ese correo.', 'data': request.POST})
         return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all(), 'error': 'Las contraseñas no coinciden.', 'data': request.POST})
-    
+
+@login_required
+def signout(request):
+    auth.logout(request)
+    return redirect('/login')
