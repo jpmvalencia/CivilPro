@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 
 from .models import Proyecto, ProyectoUsuario
+from authentapp.models import Usuario
 
 # Create your views here.
 def home(request):
@@ -30,3 +31,8 @@ def proyectos_info(request):
     proyecto_usuarios = ProyectoUsuario.objects.all()
     proyectos = Proyecto.objects.all()
     return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios})
+
+def perfil_usuario(request):
+    usuario_actual = request.user
+    return render(request, 'perfil-usuario.html', {'usuario_actual': usuario_actual})
+

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container p-5 bg-annapolis-blue rounded-10" style="min-width: 80vw; min-height: 83vh;">
+    <!-- Contenido de la página -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm"> <!-- Tamaño pequeño -->
+        <div class="modal-content bg-annapolis-blue rounded-10">
+            <div class="modal-header">
+                <h2 class="modal-title text-capitalize" id="profileModalLabel">Perfil de Usuario</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center rounded-circle">
+              <a href="">
+                  <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 120px;">
+              </a>
+          </div>
+            <div class="modal-body">
+                <!-- Contenido del perfil del usuario aquí -->
+                <span class="fw-bold"></span>{{ usuario_actual.username }}
+            
+                <!-- Puedes agregar más información aquí -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  
+$(document).ready(function(){
+  $('#profileModal').modal('show'); // Muestra el modal al cargar la página
+});
+</script>
+
+{% endblock %}
