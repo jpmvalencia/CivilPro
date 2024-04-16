@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import auth
 
-from homeapp.views import home
+from homeapp.views import proyectos_info
 from .models import Usuario, Titulo, UsuarioTitulo
 
 def login(request):
@@ -12,7 +12,7 @@ def login(request):
         if user is None:
             return render(request, 'login.html', {'error': 'El usuario o contraseña es incorrecto.', 'data': request.POST})
         auth.login(request, user)
-        return redirect(home)
+        return redirect(proyectos_info)
 
 # Create your views here.
 

@@ -19,4 +19,4 @@ class ProyectoUsuario(models.Model):
     id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.id_usuario.username + " - " + self.id_titulo.nombre
+        return  self.id_proyecto.nombre + " - " + self.id_usuario.username
