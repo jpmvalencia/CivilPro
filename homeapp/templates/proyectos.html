@@ -23,7 +23,8 @@
     </div>
     <!-- Modal -->
     {% for proyecto in proyectos %}
-    <div class="modal fade" id="item_{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+    <div class="modal fade" id="item_{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl modal-fullscreen-lg-down">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
@@ -73,7 +74,8 @@
                                 <div class="row">
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
                                         <h3 class="fw-bolder fs-4 lh-base">Personal</h3>
-                                        <button type="button" class="btn text-distant-horizon zoom-in zoom-out">
+                                        <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
+                                            data-bs-target="#agregar-usuario" data-bs-dismiss="modal" data-bs-toggle="modal">
                                             <i class="fa-solid fa-plus"></i>
                                         </button>
                                     </div>
@@ -95,6 +97,16 @@
         </div>
     </div>
     {% endfor %}
+    <div class="modal fade" id="agregar-usuario" tabindex="-1" aria-labelledby="projectModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-body">
+                    <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon" placeholder="Correo del empleado a agregar.">
+                </div>
+            </div>
+        </div>
+    </div>
     <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out"
         href="/nuevo-proyecto" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
         <i class="fa-solid fa-plus"></i>
