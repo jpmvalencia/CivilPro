@@ -110,9 +110,9 @@
                         <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 120px;">
                     </div>
                     <div class="text-center">
-                        <div class="fw-bold">{{ usuario_actual.first_name }} {{ usuario_actual.last_name }}</div>
-                        <div>{{ usuario_actual.documento }}</div>
-                        <div>{{ usuario_actual.email }}</div>
+                        <div class="fw-bold" id="sel-user-name"></div>
+                        <div id="sel-user-doc"></div>
+                        <div id="sel-user-mail"></div>
                         <div class="d-flex justify-content-center">
                             <select class="form-select text-center" style="max-width: 60%;">
                                 <option>Seleccionar Rol</option>
@@ -139,7 +139,7 @@
                     <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
                         placeholder="Correo del empleado a agregar.">
                     <ul class="list-group" id="user-data" style="display: none;">
-                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal">
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal" onclick="getUserSel()">
                             <li class="list-group-item border-0 bg-transparent text-distant-horizon">
                                 <div class="row">
                                     <div class="col-4">
@@ -175,7 +175,7 @@
                 const userDataDiv = document.getElementById('user-data');
                 if (data.length > 0) {
                     const userData = data[0]; // Assuming only one user is returned
-                    document.getElementById('user-name').textContent = userData.name;
+                    document.getElementById('user-name').textContent = userData.firstname;
                     document.getElementById('user-mail').textContent = userData.email;
                     userDataDiv.style.display = 'block';
                 } else {
@@ -184,6 +184,21 @@
             })
             .catch(error => console.error('Error:', error));
     });
+
+    function getUserSel() {
+        const userSel = document.getElementById('user-mail').innerHTML;
+        fetch(`/buscar-usuario/?query=${userSel}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const userData = data[0]; // Assuming only one user is returned
+                    document.getElementById('sel-user-name').textContent = userData.firstname + ' ' + userData.lastname;
+                    document.getElementById('sel-user-doc').textContent = userData.doc;
+                    document.getElementById('sel-user-mail').textContent = userData.email;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 </script>
 
 {% endblock %}
