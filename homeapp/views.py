@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 
@@ -33,4 +34,11 @@ def proyectos_info(request):
     usuario_actual = request.user
     return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
 
-
+@login_required
+def buscar_usuario(request):
+    query = request.GET.get('query')
+    if query:
+        results = Usuario.objects.filter(username__icontains=query)
+        data = [{'name': result.first_name, 'email': result.username} for result in results]
+        return JsonResponse(data, safe=False)
+    return JsonResponse([], safe=False)
