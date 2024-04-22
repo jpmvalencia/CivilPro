@@ -138,7 +138,7 @@
                 <div class="modal-body">
                     <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
                         placeholder="Correo del empleado a agregar.">
-                    <ul class="list-group">
+                    <ul class="list-group" id="user-data" style="display: none;">
                         <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal">
                             <li class="list-group-item border-0 bg-transparent text-distant-horizon">
                                 <div class="row">
@@ -148,8 +148,8 @@
                                     </div>
                                     <div class="col-8 d-flex align-items-center">
                                         <div>
-                                            <div class="fw-bold">Vicente Van Coco</div>
-                                            <div>vicentev@ncoco.com</div>
+                                            <div class="fw-bold" id="user-name"></div>
+                                            <div id="user-mail"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -165,5 +165,25 @@
         <i class="fa-solid fa-plus"></i>
     </a>
 </div>
+
+<script>
+    document.getElementById('busqueda').addEventListener('input', function () {
+        const searchInput = document.getElementById('busqueda').value;
+        fetch(`/buscar-usuario/?query=${searchInput}`)
+            .then(response => response.json())
+            .then(data => {
+                const userDataDiv = document.getElementById('user-data');
+                if (data.length > 0) {
+                    const userData = data[0]; // Assuming only one user is returned
+                    document.getElementById('user-name').textContent = userData.name;
+                    document.getElementById('user-mail').textContent = userData.email;
+                    userDataDiv.style.display = 'block';
+                } else {
+                    userDataDiv.style.display = 'none';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
 
 {% endblock %}
