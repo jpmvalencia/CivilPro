@@ -39,6 +39,6 @@ def buscar_usuario(request):
     query = request.GET.get('query')
     if query:
         results = Usuario.objects.filter(username__icontains=query)
-        data = [{'name': result.first_name, 'email': result.username} for result in results]
+        data = [{'firstname': result.first_name, 'lastname': result.last_name, 'email': result.username, 'doc': result.documento} for result in results]
         return JsonResponse(data, safe=False)
     return JsonResponse([], safe=False)
