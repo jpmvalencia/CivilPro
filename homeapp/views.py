@@ -22,7 +22,8 @@ def nuevo_proyecto(request):
             descripcion = request.POST.get('description')
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
-            proyecto = Proyecto(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_final=fecha_final)
+            presupuesto = request.POST.get('presupuesto')
+            proyecto = Proyecto(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_final=fecha_final, presupuesto=presupuesto)
             proyecto.constructora = request.user
             proyecto.save()
             return redirect(proyectos_info)
