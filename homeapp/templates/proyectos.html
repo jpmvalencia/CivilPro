@@ -126,7 +126,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#busqueda-usuario">Atrás</button>
-                    <button type="button" class="btn bg-midnight-express text-distant-horizon" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}">Agregar</button>
+                    <button type="button" class="btn bg-midnight-express text-distant-horizon" data-bs-dismiss="modal"
+                        data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}"
+                        onclick="addUserToProject('{{ proyecto.id }}')">Agregar</button>
                 </div>
             </div>
         </div>
@@ -136,7 +138,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-body">
-                    <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
+                    <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon" autocomplete="off"
                         placeholder="Correo del empleado a agregar.">
                     <ul class="list-group" id="user-data" style="display: none;">
                         <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal" onclick="getUserSel()">
@@ -196,6 +198,16 @@
                     document.getElementById('sel-user-doc').textContent = userData.doc;
                     document.getElementById('sel-user-mail').textContent = userData.email;
                 }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function addUserToProject(projectId) {
+        const userEmail = document.getElementById('sel-user-mail').textContent; // Retrieve email from the selected user
+        fetch(`/agregar-usuario/?projectId=${projectId}&userEmail=${userEmail}`)
+            .then(response => {
+                // Handle response if needed
+                // Maybe close modal or show a message
             })
             .catch(error => console.error('Error:', error));
     }
