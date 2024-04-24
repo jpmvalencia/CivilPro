@@ -10,7 +10,7 @@
             style="color: inherit; text-decoration: inherit; display: inline-block;">
             <div class="card text-center bg-midnight-express rounded-10 zoom-in zoom-out" style="width: 18rem;">
                 <div style="width: 100%; height: 180px;">
-                    <img src="https://img.4plebs.org/boards/pol/image/1685/15/1685159872624558.jpg" class="card-img-top"
+                    <img src="https://th.bing.com/th/id/OIP.p3asnh-5bcoAzkwRnvXUgwHaEK?rs=1&pid=ImgDetMain" class="card-img-top"
                         alt="yugiweed" style="height: 180px; object-fit: cover;">
                 </div>
                 <div class="card-body">
@@ -34,7 +34,7 @@
                 <div class="modal-body">
                     <div style="width: 100%; height: 240px;">
                         <img class="d-block mx-auto rounded-10"
-                            src="https://img.4plebs.org/boards/pol/image/1685/15/1685159872624558.jpg" alt="yugiweed"
+                            src="https://th.bing.com/th/id/OIP.p3asnh-5bcoAzkwRnvXUgwHaEK?rs=1&pid=ImgDetMain" alt="construcción"
                             style="height: 100%; width: 450px; max-width: 100%;  object-fit: cover;">
                     </div>
 
@@ -75,18 +75,19 @@
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
                                         <h3 class="fw-bolder fs-4 lh-base">Personal</h3>
                                         <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
-                                            data-bs-target="#agregar-usuario" data-bs-dismiss="modal" data-bs-toggle="modal">
+                                            data-bs-target="#busqueda-usuario" data-bs-dismiss="modal" data-bs-toggle="modal">
                                             <i class="fa-solid fa-plus"></i>
                                         </button>
                                     </div>
-                                    {% for usuario in usuarios %}
-                                    {% if proyecto == usuario.id_proyecto %}
-                                    <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                        <div class="fw-bold">{{ usuario.id_usuario.first_name }}</div>
-                                        Ingeniero Civil
-                                    </li>
-                                    {% endif %}
-                                    {% endfor %}
+                                    <ul>
+                                        {% for usuario in usuarios %}
+                                        {% if proyecto == usuario.id_proyecto %}
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
+                                            <div class="fw-bold">{{ usuario.id_usuario.first_name }}</div>
+                                            Ingeniero Civil
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </div>
@@ -96,13 +97,65 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="agregar-usuario-modal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="max-height: 250px;">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-header">
+                    <h2 class="modal-title text-capitalize" id="profileModalLabel">Perfil de Usuario</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center rounded-circle">
+                        <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 120px;">
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold" id="sel-user-name"></div>
+                        <div id="sel-user-doc"></div>
+                        <div id="sel-user-mail"></div>
+                        <div class="d-flex justify-content-center">
+                            <select class="form-select text-center" style="max-width: 60%;">
+                                <option>Seleccionar Rol</option>
+                                <option value="1">Constructor</option>
+                                <option value="2">Mario</option>
+                                <option value="3">Yugiweed</option>
+                                <option value="4">Audi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#busqueda-usuario">Atrás</button>
+                    <button type="button" class="btn bg-midnight-express text-distant-horizon" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-    <div class="modal fade" id="agregar-usuario" tabindex="-1" aria-labelledby="projectModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="busqueda-usuario" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-body">
-                    <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon" placeholder="Correo del empleado a agregar.">
+                    <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
+                        placeholder="Correo del empleado a agregar.">
+                    <ul class="list-group" id="user-data" style="display: none;">
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal" onclick="getUserSel()">
+                            <li class="list-group-item border-0 bg-transparent text-distant-horizon">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil"
+                                            style="height: 64px;">
+                                    </div>
+                                    <div class="col-8 d-flex align-items-center">
+                                        <div>
+                                            <div class="fw-bold" id="user-name"></div>
+                                            <div id="user-mail"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </a>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -112,5 +165,40 @@
         <i class="fa-solid fa-plus"></i>
     </a>
 </div>
+
+<script>
+    document.getElementById('busqueda').addEventListener('input', function () {
+        const searchInput = document.getElementById('busqueda').value;
+        fetch(`/buscar-usuario/?query=${searchInput}`)
+            .then(response => response.json())
+            .then(data => {
+                const userDataDiv = document.getElementById('user-data');
+                if (data.length > 0) {
+                    const userData = data[0]; // Assuming only one user is returned
+                    document.getElementById('user-name').textContent = userData.firstname;
+                    document.getElementById('user-mail').textContent = userData.email;
+                    userDataDiv.style.display = 'block';
+                } else {
+                    userDataDiv.style.display = 'none';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    function getUserSel() {
+        const userSel = document.getElementById('user-mail').innerHTML;
+        fetch(`/buscar-usuario/?query=${userSel}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const userData = data[0]; // Assuming only one user is returned
+                    document.getElementById('sel-user-name').textContent = userData.firstname + ' ' + userData.lastname;
+                    document.getElementById('sel-user-doc').textContent = userData.doc;
+                    document.getElementById('sel-user-mail').textContent = userData.email;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
 
 {% endblock %}
