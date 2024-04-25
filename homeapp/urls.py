@@ -10,3 +10,4 @@ urlpatterns = [
     path('actualizar_perfil/', views.actualizar_perfil, name='actualizar_perfil'),
     path('buscar-usuario/', views.buscar_usuario, name='buscar-usuario'),
 ]
+

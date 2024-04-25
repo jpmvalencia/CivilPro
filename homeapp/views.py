@@ -38,6 +38,35 @@ def proyectos_info(request):
     usuario_actual = request.user
     return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
 
+
+@login_required
+def actualizar_perfil(request):
+    if request.method == 'POST':
+        # Obtener el usuario actual
+        usuario_actual = request.user
+
+        # Obtener los datos del formulario
+        nuevo_nombre = request.POST.get('first_name')
+        nuevo_apellido = request.POST.get('last_name')
+        nuevo_username = request.POST.get('username')
+        nuevo_password = request.POST.get('password')
+
+        # Actualizar los campos del usuario con los nuevos datos
+        usuario_actual.first_name = nuevo_nombre
+        usuario_actual.last_name = nuevo_apellido
+        usuario_actual.username = nuevo_username
+        if nuevo_password:
+            usuario_actual.set_password(nuevo_password)
+
+        # Guardar los cambios en la base de datos
+        usuario_actual.save()
+
+        # Mostrar un mensaje de éxito
+        messages.success(request, 'Perfil actualizado correctamente.')
+
+        # Redirigir a alguna página de confirmación o a la misma página
+        return redirect('/proyectos')  # Reemplaza 'nombre_de_la_vista' con el nombre de tu vista
+
 @login_required
 def actualizar_perfil(request):
     if request.method == 'POST':
@@ -74,3 +103,4 @@ def buscar_usuario(request):
         data = [{'firstname': result.first_name, 'lastname': result.last_name, 'email': result.username, 'doc': result.documento} for result in results]
         return JsonResponse(data, safe=False)
     return JsonResponse([], safe=False)
+
