@@ -2,6 +2,12 @@
 
 {% block content %}
 
+<style>
+    .progress {
+      height: 8px; /* Ajusta este valor según lo delgado que quieras la barra de progreso */
+    }
+</style>
+
 <div class="container p-5 bg-annapolis-blue rounded-10" style="min-height: calc(100vh - 275px);">
     <!-- Button trigger modal -->
     <div class="text-center">
@@ -64,8 +70,22 @@
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
                                                 class="fw-bold">Fecha de finalización: </span>{{ proyecto.fecha_final }}
                                         </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Presupuesto: </span>{{ proyecto.presupuesto }}</li>
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
+                                            <span class="d-inline-flex flex-items-center flex-nowrap no-underline text-small mr-3">
+                                                <span class="color-fg-default text-bold mr-1">Presupuesto: </span>
+                                                <span>{{ proyecto.presupuesto }},00 %</span>
+                                            </span>
+                                            <div class="progress">
+                                                <div class="progress-bar" role="progressbar" aria-label="Presupuesto" 
+                                                     style="width: {{ proyecto.presupuesto }}%;" 
+                                                     aria-valuenow="{{ proyecto.presupuesto }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100"></div>
+                                            </div>
+                                        </li>
+                                        
+                                        
+                                        
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
                                                 class="fw-bold">Estado: </span>{{ proyecto.estado }}</li>
                                     </ul>

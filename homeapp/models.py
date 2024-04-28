@@ -10,6 +10,7 @@ class Proyecto(models.Model):
     fecha_inicio = models.DateField()
     fecha_final = models.DateField()
     constructora = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    presupuesto = models.IntegerField()
 
     def __str__(self):
         return self.nombre
