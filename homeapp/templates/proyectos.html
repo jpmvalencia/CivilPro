@@ -95,7 +95,7 @@
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
                                         <h3 class="fw-bolder fs-4 lh-base">Personal</h3>
                                         <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
-                                            data-bs-target="#busqueda-usuario" data-bs-dismiss="modal" data-bs-toggle="modal">
+                                            data-bs-target="#busqueda-usuario_{{ proyecto.id }}" data-bs-dismiss="modal" data-bs-toggle="modal">
                                             <i class="fa-solid fa-plus"></i>
                                         </button>
                                     </div>
@@ -117,8 +117,10 @@
             </div>
         </div>
     </div>
+    {% endfor %}
     
-    <div class="modal fade" id="agregar-usuario-modal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+    {% for proyecto in proyectos %}
+    <div class="modal fade" id="agregar-usuario-modal-{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="max-height: 250px;">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
@@ -130,9 +132,9 @@
                         <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 120px;">
                     </div>
                     <div class="text-center">
-                        <div class="fw-bold" id="sel-user-name"></div>
-                        <div id="sel-user-doc"></div>
-                        <div id="sel-user-mail"></div>
+                        <div class="fw-bold" id="sel-user-name-{{ proyecto.id }}"></div>
+                        <div id="sel-user-doc-{{ proyecto.id }}"></div>
+                        <div id="sel-user-mail-{{ proyecto.id }}"></div>
                         <div class="d-flex justify-content-center">
                             <select class="form-select text-center" style="max-width: 60%;">
                                 <option>Seleccionar Rol</option>
@@ -145,21 +147,25 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#busqueda-usuario">Atrás</button>
-                    <button type="button" class="btn bg-midnight-express text-distant-horizon" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}">Agregar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#busqueda-usuario_{{ proyecto.id }}">Atrás</button>
+                    <button type="button" class="btn bg-midnight-express text-distant-horizon" data-bs-dismiss="modal"
+                        data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}"
+                        onclick="addUserToProject('{{ proyecto.id }}')">Agregar</button>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
-    <div class="modal fade" id="busqueda-usuario" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+    
+    {% for proyecto in proyectos %}
+    <div class="modal fade" id="busqueda-usuario_{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-body">
-                    <input type="email" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
+                    <input type="email" name="busqueda" data-project-id="{{ proyecto.id }}" class="form-control text-distant-horizon" autocomplete="off"
                         placeholder="Correo del empleado a agregar.">
-                    <ul class="list-group" id="user-data" style="display: none;">
-                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal" onclick="getUserSel()">
+                    <ul class="list-group" id="user-data-{{ proyecto.id }}" style="display: none;">
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal-{{ proyecto.id }}" onclick="getUserSel('{{ proyecto.id }}')">
                             <li class="list-group-item border-0 bg-transparent text-distant-horizon">
                                 <div class="row">
                                     <div class="col-4">
@@ -168,8 +174,8 @@
                                     </div>
                                     <div class="col-8 d-flex align-items-center">
                                         <div>
-                                            <div class="fw-bold" id="user-name"></div>
-                                            <div id="user-mail"></div>
+                                            <div class="fw-bold" id="user-name-{{ proyecto.id }}"></div>
+                                            <div id="user-mail-{{ proyecto.id }}"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -180,6 +186,8 @@
             </div>
         </div>
     </div>
+    {% endfor %}
+
     <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out"
         href="/nuevo-proyecto" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
         <i class="fa-solid fa-plus"></i>
@@ -187,35 +195,53 @@
 </div>
 
 <script>
-    document.getElementById('busqueda').addEventListener('input', function () {
-        const searchInput = document.getElementById('busqueda').value;
-        fetch(`/buscar-usuario/?query=${searchInput}`)
+    document.querySelectorAll('input[name="busqueda"]').forEach(input => {
+        input.addEventListener('input', function () {
+            const searchInput = input.value;
+            const projectId = input.dataset.projectId; // Assuming you set a data attribute for project ID
+            fetch(`/buscar-usuario/?query=${searchInput}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`${searchInput}`);
+                    const userDataDiv = document.getElementById(`user-data-${projectId}`);
+                    if (data.length > 0) {
+                        // Assuming data is an array of users
+                        const userData = data[0]; // You may need to adjust this based on your response structure
+                        document.getElementById(`user-name-${projectId}`).textContent = userData.firstname;
+                        document.getElementById(`user-mail-${projectId}`).textContent = userData.email;
+                        userDataDiv.style.display = 'block';
+                    } else {
+                        userDataDiv.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+    
+    function getUserSel(projectId) {
+        const modal = document.querySelector(`#busqueda-usuario_${projectId}`);
+        const input = modal.querySelector('input[name="busqueda"]');
+        const userMail = input.value;
+
+        fetch(`/buscar-usuario/?query=${userMail}`)
             .then(response => response.json())
             .then(data => {
-                const userDataDiv = document.getElementById('user-data');
                 if (data.length > 0) {
                     const userData = data[0]; // Assuming only one user is returned
-                    document.getElementById('user-name').textContent = userData.firstname;
-                    document.getElementById('user-mail').textContent = userData.email;
-                    userDataDiv.style.display = 'block';
-                } else {
-                    userDataDiv.style.display = 'none';
+                    document.getElementById(`sel-user-name-${projectId}`).textContent = userData.firstname + ' ' + userData.lastname;
+                    document.getElementById(`sel-user-doc-${projectId}`).textContent = userData.doc;
+                    document.getElementById(`sel-user-mail-${projectId}`).textContent = userData.email;
                 }
             })
             .catch(error => console.error('Error:', error));
-    });
+    }
 
-    function getUserSel() {
-        const userSel = document.getElementById('user-mail').innerHTML;
-        fetch(`/buscar-usuario/?query=${userSel}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    const userData = data[0]; // Assuming only one user is returned
-                    document.getElementById('sel-user-name').textContent = userData.firstname + ' ' + userData.lastname;
-                    document.getElementById('sel-user-doc').textContent = userData.doc;
-                    document.getElementById('sel-user-mail').textContent = userData.email;
-                }
+    function addUserToProject(projectId) {
+        const userEmail = document.getElementById(`sel-user-mail-${projectId}`).textContent; // Retrieve email from the selected user
+        fetch(`/agregar-usuario/?projectId=${projectId}&userEmail=${userEmail}`)
+            .then(response => {
+                // Handle response if needed
+                // Maybe close modal or show a message
             })
             .catch(error => console.error('Error:', error));
     }

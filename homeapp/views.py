@@ -104,3 +104,18 @@ def buscar_usuario(request):
         return JsonResponse(data, safe=False)
     return JsonResponse([], safe=False)
 
+def agregar_usuario(request):
+    if request.method == 'GET':
+        projectId = request.GET.get('projectId')
+        userEmail = request.GET.get('userEmail')
+
+        # Assuming Usuario and ProyectoUsuario models are correctly imported
+        user = Usuario.objects.get(email=userEmail)
+        proyecto = Proyecto.objects.get(id=projectId)
+
+        # Create ProyectoUsuario instance
+        proyecto_usuario = ProyectoUsuario.objects.create(id_usuario=user, id_proyecto=proyecto)
+        proyecto_usuario.save()
+
+        # Handle response if needed
+    return redirect(proyectos_info)
