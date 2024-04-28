@@ -104,6 +104,7 @@ def buscar_usuario(request):
         return JsonResponse(data, safe=False)
     return JsonResponse([], safe=False)
 
+@login_required
 def agregar_usuario(request):
     if request.method == 'GET':
         projectId = request.GET.get('projectId')
