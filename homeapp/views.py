@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-
+from django.db import connection
 from .models import Usuario
 from .models import Proyecto, ProyectoUsuario
 from authentapp.models import Usuario
@@ -21,16 +21,25 @@ def nuevo_proyecto(request):
             print(request.POST)
             nombre = request.POST.get('title')
             descripcion = request.POST.get('description')
+            estado = 'En progreso'  # Estado predeterminado
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
-            proyecto = Proyecto(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_final=fecha_final, presupuesto=presupuesto)
-            proyecto.constructora = request.user
-            proyecto.save()
+            with connection.cursor() as cursor:
+                # Ejecutar consulta SQL para insertar un nuevo proyecto
+                cursor.execute(
+                    """
+                    INSERT INTO homeapp_proyecto
+                    (nombre, descripcion, estado, fecha_inicio, fecha_final, constructora_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    [nombre, descripcion, estado, fecha_inicio, fecha_final, request.user.id]
+                )
             return redirect(proyectos_info)
-        except:
+        except Exception as e:
+            print(e)
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
-
+        
 @login_required
 def proyectos_info(request):
     proyecto_usuarios = ProyectoUsuario.objects.all()
