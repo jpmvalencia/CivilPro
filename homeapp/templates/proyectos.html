@@ -47,11 +47,30 @@
                     <div class="container mt-3">
                         <div class="row">
                             <div class="col-lg-7">
-                                <div class="bg-midnight-express rounded-5 text-center mb-3"
-                                    style="width: 80%; height: 400px;">
-                                    Tareas
+                                
+                                <div class="d-flex justify-content-between bg-midnight-express rounded-10" style="width: 80%; height: 40px; text-align: center;">
+                                    <h3 class="fw-bolder fs-4 lh-base">   Tareas</h3>
+                                    <div style="display: flex; gap: 10px;">
+
+                                        <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
+                                            data-bs-target="#buscar-tarea" data-bs-dismiss="modal" data-bs-toggle="modal">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+
+                                        <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="/nueva-tarea">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+
+                                    </div>
                                 </div>
+
+                                <div class="bg-midnight-express rounded-5 text-center mb-3"
+                                style="width: 80%; height: 400px;">
+                                </div>
+
                             </div>
+
+
                             <div class="col-lg-5">
                                 <div class="row">
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
@@ -192,6 +211,7 @@
         href="/nuevo-proyecto" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
         <i class="fa-solid fa-plus"></i>
     </a>
+
 </div>
 
 <script>
