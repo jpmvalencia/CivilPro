@@ -66,7 +66,8 @@ def proyectos_info(request):
     proyecto_usuarios = ProyectoUsuario.objects.all()
     proyectos = Proyecto.objects.all()
     usuario_actual = request.user
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
+    tareas = Tarea.objects.all()
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'tareas': tareas, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
 
 
 @login_required
