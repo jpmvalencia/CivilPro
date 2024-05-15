@@ -10,13 +10,15 @@
         .container2 {
   display: block;
   position: relative;
-  padding: 1px 300px 5px 2em;
-  margin-bottom: 12px;
+  padding: 1px 145px 8px 3em;
+  margin-bottom: 5px;
+  margin-top: 5px;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  text-align:justify;
 }
 
 /* Hide the browser's default checkbox */
@@ -78,8 +80,20 @@
         width: 400px;
         height: 300px;
         border: 10px ;
+        border-bottom: 10px;
         margin: 40px;
+        margin-bottom: 40px;
+        padding-bottom: 50px;
     }
+
+    .btn-fixed-width {
+        width: 350px; /* Establece el ancho fijo deseado */
+        text-align: left; /* Alinea el texto a la izquierda dentro del botón */
+        margin-right: 10px; /* Ajusta el margen entre botones según sea necesario */
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+
 
    </style>
 </head>
@@ -146,12 +160,15 @@
                                 <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
                                     <div class="col-lg-5">
                                         <div class="margen">
-
                                             {% for tarea in tareas %}
-                                            <label class="container2"><a href="https://www.google.com">{{tarea.nombre}}</a>
+                                            <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
+                                                <label class="container2">{{tarea.nombre}}
                                                 <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
                                                 <span class="checkmark"></span>
-                                            </label>
+                                            </label> 
+                                            </button>
+                                            <h1></h1>
+                                            
                                             {% endfor %}
                                         </div>
                                     </div>        
@@ -303,6 +320,74 @@
         <i class="fa-solid fa-plus"></i>
     </a>
 
+    <div class="modal fade" id="buscar-tarea" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-body">
+                    <input type="text" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
+                        placeholder="Buscar tareas">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for tarea in tareas %}
+    <div class="modal fade" id="tareaModal" tabindex="-1" aria-labelledby="tareaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tamaño pequeño -->
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-header">
+                    <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre}}</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+              <div class="modal-body">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                        <!-- Columna izquierda -->
+                        <div class="col-md-6">
+                            <!-- Campo de entrada para el nombre -->
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Descripción</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.descripcion }}">
+                            </div>
+
+                            <!-- Campo de entrada para el apellido -->
+                            <div class="mb-3">
+                                <label for="start-date" class="form-label">Fecha de inicio:</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio }}">
+                            </div>
+                            <!-- Campo de entrada para el email -->
+                            <div class="mb-3">
+                                <label for="end-date" class="form-label">Fecha de finalización:</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final }}">
+                            </div>
+                        </div>
+                        <!-- Columna derecha -->
+                        <div class="col-md-6">
+                            <!-- Campo de entrada para la contraseña -->
+                            <div class="mb-3">
+                                <label for="presupuesto" class="form-label">Presupuesto</label>
+                                <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.presupuesto }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="responsable" class="form-label">Responsable</label>
+                                <input type="text" readonly="readonly" step="0.01" name="responsable" id="responsable" class="form-control text-distant-horizon" value="">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+                    <!-- Puedes agregar más información aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    
 </div>
 
 <script>
@@ -357,6 +442,9 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+
+
 </script>
 
 
