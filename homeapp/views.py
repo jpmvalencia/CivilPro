@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import connection
 
 
 from .models import Usuario
@@ -33,11 +34,30 @@ def nuevo_proyecto(request):
 
 @login_required
 def proyectos_info(request):
-    proyecto_usuarios = ProyectoUsuario.objects.all()
-    proyectos = Proyecto.objects.all()
     usuario_actual = request.user
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
 
+    # Consulta cruda para obtener todos los proyectos
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM homeapp_proyecto")
+        proyectos_raw = cursor.fetchall()
+    
+    # Convertir los datos de proyectos a una lista de diccionarios
+    proyectos = []
+    for row in proyectos_raw:
+        proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'estado': row[3], 'fecha_inicio': row[4], 'fecha_final': row[5], 'presupuesto': row[6], 'constructora_id': row[7]})
+
+    # Consulta cruda para obtener todos los usuarios relacionados con proyectos
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM homeapp_proyectousuario")
+        proyecto_usuarios_raw = cursor.fetchall()
+    
+    # NO FUNCIONA
+    # Convertir los datos de proyecto_usuarios a una lista de diccionarios
+    proyecto_usuarios = []
+    for row in proyecto_usuarios_raw:
+        proyecto_usuarios.append({'id': row[0], 'id_proyecto': row[1], 'id_usuario': row[2]})
+
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
 
 @login_required
 def actualizar_perfil(request):
@@ -110,13 +130,24 @@ def agregar_usuario(request):
         projectId = request.GET.get('projectId')
         userEmail = request.GET.get('userEmail')
 
-        # Assuming Usuario and ProyectoUsuario models are correctly imported
-        user = Usuario.objects.get(email=userEmail)
-        proyecto = Proyecto.objects.get(id=projectId)
+        # Obtener el usuario por email usando una consulta SQL cruda
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT id FROM authentapp_usuario WHERE email = %s", [userEmail])
+            user_row = cursor.fetchone()
 
-        # Create ProyectoUsuario instance
-        proyecto_usuario = ProyectoUsuario.objects.create(id_usuario=user, id_proyecto=proyecto)
-        proyecto_usuario.save()
+        user_id = user_row[0]
 
-        # Handle response if needed
+        # Verificar si el proyecto existe usando una consulta SQL cruda
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT id FROM homeapp_proyecto WHERE id = %s", [projectId])
+            proyecto_row = cursor.fetchone()
+
+        proyecto_id = proyecto_row[0]
+
+        # Crear una nueva entrada en ProyectoUsuario usando una consulta SQL cruda
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO homeapp_proyectousuario (id_usuario_id, id_proyecto_id) VALUES (%s, %s)",
+                [user_id, proyecto_id]
+            )
     return redirect(proyectos_info)
