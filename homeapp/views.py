@@ -3,8 +3,6 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import connection
-
-
 from .models import Usuario
 from .models import Proyecto, ProyectoUsuario
 from authentapp.models import Usuario
@@ -19,18 +17,24 @@ def nuevo_proyecto(request):
         return render(request, 'nuevo-proyecto.html')
     else:
         try:
-            print(request.POST)
             nombre = request.POST.get('title')
             descripcion = request.POST.get('description')
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
-            proyecto = Proyecto(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_final=fecha_final, presupuesto=presupuesto)
-            proyecto.constructora = request.user
-            proyecto.save()
-            return redirect(proyectos_info)
-        except:
+            print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto)
+            
+            # Guardar en la tabla Proyectos de la base de datos Oracle
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "INSERT INTO Proyectos (nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, NIT_con_pro) VALUES (%s, %s, %s, %s, %s, %s)",
+                    [nombre, descripcion, fecha_inicio, fecha_final, presupuesto, 4]
+                )
+            
+            return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
+        except Exception as e:
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
+
 
 @login_required
 def proyectos_info(request):
@@ -38,13 +42,13 @@ def proyectos_info(request):
 
     # Consulta cruda para obtener todos los proyectos
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM homeapp_proyecto")
+        cursor.execute("SELECT * FROM proyectos")
         proyectos_raw = cursor.fetchall()
     
     # Convertir los datos de proyectos a una lista de diccionarios
     proyectos = []
     for row in proyectos_raw:
-        proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'estado': row[3], 'fecha_inicio': row[4], 'fecha_final': row[5], 'presupuesto': row[6], 'constructora_id': row[7]})
+        proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'fecha_inicio': row[3], 'fecha_final': row[4], 'presupuesto': row[5], 'constructora_id': row[6]})
 
     # Consulta cruda para obtener todos los usuarios relacionados con proyectos
     with connection.cursor() as cursor:
