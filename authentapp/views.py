@@ -9,26 +9,14 @@ from .models import Usuario, Titulo, UsuarioTitulo#, Constructora
 
     
 def login(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        
-        # Verificar si el usuario es un Usuario
-        user = authenticate(username=email, password=password)
-        if user is not None:
-            auth.login(request, user)
-            return redirect(proyectos_info) 
-        # Si no es un Usuario, verificar si es una Constructora
-        try:
-            constructora = Constructora.objects.get(correo=email)
-            if constructora.contraseña == password:
-                return redirect(proyectos_info) 
-            else:
-                return render(request, 'login.html', {'error': 'Correo o contraseña es incorrecto.', 'data': request.POST})
-        except Constructora.DoesNotExist:
-            return render(request, 'login.html', {'error': 'Correo o contraseña es incorrecto.', 'data': request.POST})
-
-    return render(request, 'login.html')
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    else:
+        user = auth.authenticate(request, username=request.POST['email'], password=request.POST['password'])
+        if user is None:
+            return render(request, 'login.html', {'error': 'El usuario o contraseña es incorrecto.', 'data': request.POST})
+        auth.login(request, user)
+        return redirect(proyectos_info)
 
     
 
