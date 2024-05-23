@@ -13,24 +13,38 @@ from authentapp.models import Usuario
 def home(request):
     return render(request, 'home.html')
 
+
 @login_required
 def nuevo_proyecto(request):
     if request.method == 'GET':
         return render(request, 'nuevo-proyecto.html')
     else:
         try:
-            print(request.POST)
+            # Extraer datos del formulario
             nombre = request.POST.get('title')
             descripcion = request.POST.get('description')
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
-            proyecto = Proyecto(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_final=fecha_final, presupuesto=presupuesto)
-            proyecto.constructora = request.user
-            proyecto.save()
-            return redirect(proyectos_info)
-        except:
-            return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
+            constructora_id = request.user.id
+
+            # Validación simple de los datos recibidos (puedes mejorar esta parte)
+            if not (nombre and descripcion and fecha_inicio and fecha_final and presupuesto):
+                raise ValueError("Todos los campos son obligatorios.")
+
+            # Convertir presupuesto a número
+            presupuesto = float(presupuesto)
+
+            # Realizar la inserción en la base de datos usando connection.cursor
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    INSERT INTO proyectos (nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, constructora_id)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, [nombre, descripcion, fecha_inicio, fecha_final, presupuesto, constructora_id])
+
+            return redirect('proyectos_info')
+        except Exception as e:
+            return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos. Error: {}'.format(e)})
 
 @login_required
 def proyectos_info(request):

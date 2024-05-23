@@ -137,6 +137,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authentapp.Usuario'
 
+
 JAZZMIN_SETTINGS = {
     'site_header': 'CivilPro',
     'site_brand': 'CivilPro',
