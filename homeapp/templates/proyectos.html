@@ -136,13 +136,13 @@
                         <div id="sel-user-doc-{{ proyecto.id }}"></div>
                         <div id="sel-user-mail-{{ proyecto.id }}"></div>
                         <div class="d-flex justify-content-center">
-                            <select class="form-select text-center" style="max-width: 60%;">
-                                <option>Seleccionar Rol</option>
-                                <option value="1">Constructor</option>
-                                <option value="2">Mario</option>
-                                <option value="3">Yugiweed</option>
-                                <option value="4">Audi</option>
+                            <select class="form-select text-center" style="max-width: 60%;" id="sel-user-rol-{{ proyecto.id }}">
+                                <option value="">Seleccionar Rol</option>
+                                {% for rol in roles %}
+                                    <option value="{{ rol }}">{{ rol }}</option>
+                                {% endfor %}
                             </select>
+                            
                         </div>
                     </div>
                 </div>
@@ -235,16 +235,18 @@
             })
             .catch(error => console.error('Error:', error));
     }
-
     function addUserToProject(projectId) {
-        const userEmail = document.getElementById(`sel-user-mail-${projectId}`).textContent; // Retrieve email from the selected user
-        fetch(`/agregar-usuario/?projectId=${projectId}&userEmail=${userEmail}`)
-            .then(response => {
-                // Handle response if needed
-                // Maybe close modal or show a message
-            })
-            .catch(error => console.error('Error:', error));
-    }
+    const userEmail = document.getElementById(`sel-user-mail-${projectId}`).textContent; // Retrieve email from the selected user
+    const userRol = document.getElementById(`sel-user-rol-${projectId}`).value; // Retrieve selected role
+
+    fetch(`/agregar-usuario/?projectId=${projectId}&userEmail=${userEmail}&rolUser=${userRol}`)
+        .then(response => {
+            // Handle response if needed
+            // Maybe close modal or show a message
+        })
+        .catch(error => console.error('Error:', error));
+}
+
 </script>
 
 {% endblock %}
