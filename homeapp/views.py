@@ -3,8 +3,6 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import connection
-
-
 from .models import Usuario
 from .models import Proyecto, ProyectoUsuario
 from authentapp.models import Usuario
@@ -46,10 +44,11 @@ def nuevo_proyecto(request):
         except Exception as e:
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos. Error: {}'.format(e)})
 
+
 @login_required
 def proyectos_info(request):
     usuario_actual = request.user
-
+    
     # Consulta cruda para obtener todos los proyectos
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM homeapp_proyecto")
@@ -71,7 +70,16 @@ def proyectos_info(request):
     for row in proyecto_usuarios_raw:
         proyecto_usuarios.append({'id': row[0], 'id_proyecto': row[1], 'id_usuario': row[2]})
 
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual})
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT 1 
+            FROM constructoras 
+            WHERE nit_con = %s
+        """, [usuario_actual.documento])
+        show_link = cursor.fetchone() is not None  
+
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual, 'show_link': show_link})
+
 
 @login_required
 def actualizar_perfil(request):
