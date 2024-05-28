@@ -18,12 +18,12 @@ def nueva_tarea(request):
         return render(request,'nueva-tarea.html')
     else:
         try:
-            print(request.POST)
             nombre = request.POST.get('title')
             descripcion = request.POST.get('description')
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
+
             tarea = Tarea(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_final=fecha_final, presupuesto=presupuesto)
             
             tarea.save()
@@ -43,6 +43,7 @@ def nuevo_proyecto(request):
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
+
             print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto)
             
             # Guardar en la tabla Proyectos de la base de datos Oracle
@@ -63,24 +64,38 @@ def proyectos_info(request):
     
     # Consulta cruda para obtener todos los proyectos
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM homeapp_proyecto")
+        cursor.execute("SELECT * FROM proyectos")
         proyectos_raw = cursor.fetchall()
-    
+
+    print("Hola")
+    print(proyectos_raw)
     # Convertir los datos de proyectos a una lista de diccionarios
     proyectos = []
     for row in proyectos_raw:
-        proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'estado': row[3], 'fecha_inicio': row[4], 'fecha_final': row[5], 'presupuesto': row[6], 'constructora_id': row[7]})
-
+        proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'fecha_inicio': row[3], 'fecha_final': row[4], 'presupuesto': row[5], 'constructora_id': row[6]})
+    
     # Consulta cruda para obtener todos los usuarios relacionados con proyectos
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM homeapp_proyectousuario")
+        cursor.execute("SELECT * FROM miembros_proyectos")
         proyecto_usuarios_raw = cursor.fetchall()
     
     # NO FUNCIONA
     # Convertir los datos de proyecto_usuarios a una lista de diccionarios
     proyecto_usuarios = []
     for row in proyecto_usuarios_raw:
-        proyecto_usuarios.append({'id': row[0], 'id_proyecto': row[1], 'id_usuario': row[2]})
+        proyecto_usuarios.append({'documento_mie_pro': row[0], 'id_pro_mie': row[1], 'nombre_rol_mie_pro': row[2], 'nit_con_mie_pro': row[3]})
+    print("Hola1")
+    print(proyecto_usuarios)
+
+    # Obtener los roles desde la base de datos
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM roles1")
+        roles_raw = cursor.fetchall()  # Esto me da una lista de tuplas
+        
+    roles = [row[0] for row in roles_raw]
+    print("Hola")
+    print(roles)
+
 
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -90,7 +105,7 @@ def proyectos_info(request):
         """, [usuario_actual.documento])
         show_link = cursor.fetchone() is not None  
 
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual, 'show_link': show_link})
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual, 'roles': roles,'show_link': show_link})
 
 
 
@@ -157,32 +172,49 @@ def buscar_usuario(request):
         results = Usuario.objects.filter(username__icontains=query)
         data = [{'firstname': result.first_name, 'lastname': result.last_name, 'email': result.username, 'doc': result.documento} for result in results]
         return JsonResponse(data, safe=False)
+    
+    
     return JsonResponse([], safe=False)
+
 
 @login_required
 def agregar_usuario(request):
     if request.method == 'GET':
         projectId = request.GET.get('projectId')
         userEmail = request.GET.get('userEmail')
+        rolUser = request.GET.get('rolUser')
+        
+        print("---------------------------------------------")
+        print(userEmail)
+        print("---------------------------------------------")
+        print(projectId)
+        print("---------------------------------------------")
+        print(rolUser)
+        print("---------------------------------------------")
 
-        # Obtener el usuario por email usando una consulta SQL cruda
         with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM roles1 WHERE nombre_rol = %s", [rolUser])
+            rol_row = cursor.fetchone()
+            print(rol_row)
             cursor.execute("SELECT id FROM authentapp_usuario WHERE email = %s", [userEmail])
             user_row = cursor.fetchone()
-
-        user_id = user_row[0]
-
-        # Verificar si el proyecto existe usando una consulta SQL cruda
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT id FROM homeapp_proyecto WHERE id = %s", [projectId])
+            print(user_row)
+            cursor.execute("SELECT id_pro FROM proyectos WHERE id_pro = %s", [projectId])
             proyecto_row = cursor.fetchone()
+            print(proyecto_row)
 
+            
+        # Obtener los IDs correspondientes
+        rolUser_id = rol_row[0]
+        user_id = user_row[0]
         proyecto_id = proyecto_row[0]
+        print("Llega hasta aquí")
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO miembros_proyectos (documento_mie_pro, id_pro_mie, nombre_rol_mie_pro, nit_con_mie_pro) VALUES (%s, %s, %s, %s)",
+            [user_id, proyecto_id, rolUser_id, 'j']
+        )# Realizar la inserciónwith connection.cursor() as cursor:
+    
 
-        # Crear una nueva entrada en ProyectoUsuario usando una consulta SQL cruda
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO homeapp_proyectousuario (id_usuario_id, id_proyecto_id) VALUES (%s, %s)",
-                [user_id, proyecto_id]
-            )
-    return redirect(proyectos_info)
+
+    return redirect('/proyectos')
