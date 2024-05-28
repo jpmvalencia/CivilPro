@@ -315,10 +315,13 @@
     </div>
     {% endfor %}
 
+
+    {% if show_link %}
     <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out"
         href="/nuevo-proyecto" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
         <i class="fa-solid fa-plus"></i>
     </a>
+    {% endif %}
 
     <div class="modal fade" id="buscar-tarea" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
@@ -387,7 +390,7 @@
     </div>
     {% endfor %}
 
-    
+ 
 </div>
 
 <script>
