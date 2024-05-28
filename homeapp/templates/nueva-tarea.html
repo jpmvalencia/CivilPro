@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container bg-annapolis-blue rounded-10 p-5" style="max-width: 800px;">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Título de la tarea</label>
+            <input type="text" name="title" id="title" class="form-control text-distant-horizon" autocomplete="off" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Descripción</label>
+            <textarea name="description" id="description" class="form-control text-distant-horizon" placeholder="Agrega una descripción de la tarea." autocomplete="off" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="start-date">Fecha de inicio</label>
+            <input type="date" name="start-date" id="start-date" class="form-control text-distant-horizon" required>
+        </div>
+        <div class="form-group">
+            <label for="end-date">Fecha de finalización</label>
+            <input type="date" name="end-date" id="end-date" class="form-control text-distant-horizon" required>
+        </div>
+        <div class="form-group">
+            <label for="presupuesto">Presupuesto</label>
+            <input type="number" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" placeholder="Agrega un presupuesto para la tarea." required>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn bg-distant-horizon text-midnight-express">Crear tarea</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
