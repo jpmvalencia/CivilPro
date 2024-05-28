@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
+from django.contrib.auth import authenticate
+from django.db import connection
 
 from homeapp.views import proyectos_info
-from .models import Usuario, Titulo, UsuarioTitulo
+from .models import Usuario, Titulo, UsuarioTitulo#, Constructora
 
+    
 def login(request):
     if request.method == 'GET':
         return render(request, 'login.html')
@@ -14,6 +17,8 @@ def login(request):
             return render(request, 'login.html', {'error': 'El usuario o contraseña es incorrecto.', 'data': request.POST})
         auth.login(request, user)
         return redirect(proyectos_info)
+
+    
 
 # Create your views here.
 
@@ -45,6 +50,45 @@ def signup(request):
             except:
                 return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all(), 'error': 'Ya existe un usuario registrado con ese correo.', 'data': request.POST})
         return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all(), 'error': 'Las contraseñas no coinciden.', 'data': request.POST})
+    
+
+def signupcon(request):
+    if request.method == 'GET':
+        return render(request, 'signup-con.html')
+    else:
+        if request.POST['password'] == request.POST['repassword']:
+            try:
+                with connection.cursor() as cursor:
+                    nit_id = request.POST['nit_id']
+                    first_name = request.POST['first_name']
+                    email = request.POST['your_email']
+                    password = request.POST['password']
+                    telefono = request.POST['phone']
+
+                    query = """
+                        INSERT INTO constructoras (nit_con, nombre_con, correo_con, contraseña_con, telefono_con)
+                        VALUES (%s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(query, [nit_id, first_name, email, password, telefono])
+                
+                user = Usuario.objects.create_user(
+                    username=email,
+                    password=password,
+                    first_name=first_name,
+                    email=email,
+                    documento=nit_id,
+                    codigo_pais=request.POST['code'],
+                    telefono=request.POST['phone']
+                )
+
+                print(request.POST)
+                auth.login(request, user)
+                return redirect('../login')
+            except Exception as e:
+                print(e)  # Log the error
+                return render(request, 'signup-con.html', {'error': 'Ya existe un usuario registrado con ese correo.', 'data': request.POST})
+        return render(request, 'signup-con.html', {'error': 'Las contraseñas no coinciden.', 'data': request.POST})
+
 
 @login_required
 def signout(request):

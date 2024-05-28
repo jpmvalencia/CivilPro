@@ -72,27 +72,17 @@
 			<form class="form-detail" method="post" id="myform">
 				{% csrf_token %}
 				<div class="form-left">
-					<h2>Registro de Usuario</h2>
+					<h2>Registro Constructoras</h2>
 					<div class="form-group">
 						<div class="form-row form-row-1">
 							<input type="text" name="first_name" id="first_name" class="input-text" placeholder="Nombre" value="{{ data.first_name }}" required>
-						</div>
-						<div class="form-row form-row-2">
-							<input type="text" name="last_name" id="last_name" class="input-text" placeholder="Apellido" value="{{ data.last_name }}" required>
+
+                        </div>
+                        <div class="form-row form-row-2">
+                            <input type="text" name="nit_id" class="nit_id" id="nit_id" placeholder="NIT" value="{{ data.nit_id }}" required>
 						</div>
 					</div>
-					<div class="form-row scroll-container">
-						<p class="text-midnight-express">Seleccione sus especializaciones:</p>
-						{% for titulo in titulos_disponibles %}
-							<div class="form-checkbox">
-								<label class="container">
-									<p>{{ titulo.nombre }}</p>
-									<input type="checkbox" name="titles[]" value="{{ titulo.nombre }}">
-									<span class="checkmark"></span>
-								</label>
-							</div>
-						{% endfor %}
-					</div>
+					
 					<div class="form-group">
 						<div class="form-row form-row-1">
 							<input type="password" name="password" id="password" class="password" placeholder="Contraseña" value="{{ data.password }}" required>
@@ -115,16 +105,12 @@
 					<div class="form-row">
 						<input type="text" name="your_email" id="your_email" class="input-text" value="{{ data.your_email }}" required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" placeholder="Correo Electronico">
 					</div>
-					<div class="form-row">
-						<input type="text" name="doc_id" class="doc_id" id="doc_id" placeholder="Número de Documento" value="{{ data.doc_id }}" required>
-					</div>
+					
 					
 					<div class="form-row-last">
 						<input type="submit" name="register" class="register" value="Registrar">
-						<div class="text-center pt-3 text-muted">¿No tienes cuenta? <a href="/signupcon">Regístrate como constructora</a></div>
 					</div>
 					<h2></h2>
-					
 				</div>
 			</form>
 		</div>
@@ -154,20 +140,6 @@
 			alert(errorMessage);
 		}
 	
-		document.getElementById("myform").addEventListener("submit", function(event) {
-			var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-			var alMenosUnoSeleccionado = false;
-			
-			checkboxes.forEach(function(checkbox) {
-				if (checkbox.checked) {
-					alMenosUnoSeleccionado = true;
-				}
-			});
-			if (!alMenosUnoSeleccionado) {
-				alert('Por favor, seleccione al menos un título.');
-				event.preventDefault(); // Evitar el envío del formulario solo si no se han seleccionado títulos
-			}
-		});
 	</script>
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 </html>

@@ -1,12 +1,103 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<head>
+    <style>
+        .progress {
+          height: 8px; /* Ajusta este valor según lo delgado que quieras la barra de progreso */
+        }
 
-<style>
-    .progress {
-      height: 8px; /* Ajusta este valor según lo delgado que quieras la barra de progreso */
+        .container2 {
+  display: block;
+  position: relative;
+  padding: 1px 145px 8px 3em;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-align:justify;
+}
+
+/* Hide the browser's default checkbox */
+.container2 input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container2:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container2 input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container2 input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container2 .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.margen{
+        width: 400px;
+        height: 300px;
+        border: 10px ;
+        border-bottom: 10px;
+        margin: 40px;
+        margin-bottom: 40px;
+        padding-bottom: 50px;
     }
-</style>
+
+    .btn-fixed-width {
+        width: 350px; /* Establece el ancho fijo deseado */
+        text-align: left; /* Alinea el texto a la izquierda dentro del botón */
+        margin-right: 10px; /* Ajusta el margen entre botones según sea necesario */
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+
+
+   </style>
+</head>
+
 
 <div class="container p-5 bg-annapolis-blue rounded-10" style="min-height: calc(100vh - 275px);">
     <!-- Button trigger modal -->
@@ -47,11 +138,47 @@
                     <div class="container mt-3">
                         <div class="row">
                             <div class="col-lg-7">
-                                <div class="bg-midnight-express rounded-5 text-center mb-3"
-                                    style="width: 80%; height: 400px;">
-                                    Tareas
+                                
+                                <div class="d-flex justify-content-between bg-midnight-express rounded-10" style="width: 80%; height: 40px; text-align: center;">
+                                    <h3 class="fw-bolder fs-4 lh-base">Tareas</h3>
+                                    <div style="display: flex; gap: 10px;">
+
+                                        <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
+                                            data-bs-target="#buscar-tarea" data-bs-dismiss="modal" data-bs-toggle="modal">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+
+                                        <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="/nueva-tarea">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+
+                                    </div>
                                 </div>
+
+                                <h1></h1>
+
+                                <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
+                                    <div class="col-lg-5">
+                                        <div class="margen">
+                                            {% for tarea in tareas %}
+                                            <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
+                                                <label class="container2">{{tarea.nombre}}
+                                                <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
+                                                <span class="checkmark"></span>
+                                            </label> 
+                                            </button>
+                                            <h1></h1>
+                                            
+                                            {% endfor %}
+                                        </div>
+                                    </div>        
+                                    
+                                </div>
+                                
+
                             </div>
+
+
                             <div class="col-lg-5">
                                 <div class="row">
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
@@ -188,10 +315,82 @@
     </div>
     {% endfor %}
 
+
+    {% if show_link %}
     <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out"
         href="/nuevo-proyecto" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
         <i class="fa-solid fa-plus"></i>
     </a>
+    {% endif %}
+
+    <div class="modal fade" id="buscar-tarea" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-body">
+                    <input type="text" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
+                        placeholder="Buscar tareas">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for tarea in tareas %}
+    <div class="modal fade" id="tareaModal" tabindex="-1" aria-labelledby="tareaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tamaño pequeño -->
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-header">
+                    <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre}}</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+              <div class="modal-body">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                        <!-- Columna izquierda -->
+                        <div class="col-md-6">
+                            <!-- Campo de entrada para el nombre -->
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Descripción</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.descripcion }}">
+                            </div>
+
+                            <!-- Campo de entrada para el apellido -->
+                            <div class="mb-3">
+                                <label for="start-date" class="form-label">Fecha de inicio:</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio }}">
+                            </div>
+                            <!-- Campo de entrada para el email -->
+                            <div class="mb-3">
+                                <label for="end-date" class="form-label">Fecha de finalización:</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final }}">
+                            </div>
+                        </div>
+                        <!-- Columna derecha -->
+                        <div class="col-md-6">
+                            <!-- Campo de entrada para la contraseña -->
+                            <div class="mb-3">
+                                <label for="presupuesto" class="form-label">Presupuesto</label>
+                                <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.presupuesto }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="responsable" class="form-label">Responsable</label>
+                                <input type="text" readonly="readonly" step="0.01" name="responsable" id="responsable" class="form-control text-distant-horizon" value="">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+                    <!-- Puedes agregar más información aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+ 
 </div>
 
 <script>
@@ -217,6 +416,7 @@
                 .catch(error => console.error('Error:', error));
         });
     });
+
     
     function getUserSel(projectId) {
         const modal = document.querySelector(`#busqueda-usuario_${projectId}`);
@@ -236,6 +436,7 @@
             .catch(error => console.error('Error:', error));
     }
     function addUserToProject(projectId) {
+
     const userEmail = document.getElementById(`sel-user-mail-${projectId}`).textContent; // Retrieve email from the selected user
     const userRol = document.getElementById(`sel-user-rol-${projectId}`).value; // Retrieve selected role
 
@@ -247,6 +448,8 @@
         .catch(error => console.error('Error:', error));
 }
 
+
 </script>
+
 
 {% endblock %}
