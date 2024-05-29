@@ -154,15 +154,16 @@
 
                                     </div>
                                 </div>
-
+                                
                                 <h1></h1>
-                                {% if tarea == proyecto.id %}
                                 <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
                                     <div class="col-lg-5">
                                         <div class="margen">
                                             {% for tarea in tareas %}
+                                            {% if tarea.id_pro_tar == proyecto.id %}
+                                            
                                             <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
-                                                <label class="container2">{{tarea.nombre}}
+                                                <label class="container2">{{tarea.nombre_tar}}
                                                     <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}">
                                                     <span class="checkmark"></span>
                                                 </label>
@@ -171,14 +172,15 @@
                                             </label> 
                                             </button>
                                             <h1></h1>
-                                            
+
+                                            {% endif %}
                                             {% endfor %}
                                         </div>
                                     </div>        
                                     
                                 </div>
                                 
-                                {% endif %}
+                                
                             </div>
 
 

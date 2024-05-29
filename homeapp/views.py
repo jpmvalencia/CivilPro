@@ -94,7 +94,7 @@ def proyectos_info(request):
         roles_raw = cursor.fetchall()  # Esto me da una lista de tuplas
         
     roles = [row[0] for row in roles_raw]
-
+    print(roles)
 
     # Obtener las tareas desde la base de datos
     with connection.cursor() as cursor:
@@ -123,6 +123,10 @@ def proyectos_info(request):
             WHERE nit_con = %s
         """, [usuario_actual.documento])
         show_link = cursor.fetchone() is not None  
+
+        # cursor.execute("SELECT proyectos.id_pro, tareas.* FROM proyectos INNER JOIN tareas ON tareas.id_pro_tar = proyectos.id_pro")
+        
+
 
     return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link})
 
