@@ -18,15 +18,20 @@ def nueva_tarea(request):
         return render(request,'nueva-tarea.html')
     else:
         try:
+            id = request.POST.get('id')
             nombre = request.POST.get('title')
             descripcion = request.POST.get('description')
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
 
-            tarea = Tarea(nombre=nombre, descripcion=descripcion, fecha_inicio=fecha_inicio, fecha_final=fecha_final, presupuesto=presupuesto)
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "INSERT INTO Tareas (nombre_tar, descripcion_tar, fecha_inicio_tar, fecha_final_tar, presupuesto_tar) VALUES (%s, %s, %s, %s, %s)",
+                    [nombre, descripcion, fecha_inicio, fecha_final, presupuesto]
+                )
             
-            tarea.save()
+            return redirect('proyectos_info')
             return redirect(proyectos_info)
         except:
             return render(request, 'nueva-tarea.html', {'error': 'Ingresa datos válidos.'})
@@ -46,10 +51,9 @@ def nuevo_proyecto(request):
 
             print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto)
             
-            # Guardar en la tabla Proyectos de la base de datos Oracle
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO Proyectos (nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, NIT_con_pro) VALUES (%s, %s, %s, %s, %s, %s)",
+                    "INSERT INTO Proyectos (id_pro, nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, NIT_con_pro) VALUES (proyecto_seq.NEXTVAL, %s, %s, %s, %s, %s, %s)",
                     [nombre, descripcion, fecha_inicio, fecha_final, presupuesto, 4]
                 )
             
@@ -67,8 +71,6 @@ def proyectos_info(request):
         cursor.execute("SELECT * FROM proyectos")
         proyectos_raw = cursor.fetchall()
 
-    print("Hola")
-    print(proyectos_raw)
     # Convertir los datos de proyectos a una lista de diccionarios
     proyectos = []
     for row in proyectos_raw:
@@ -84,8 +86,7 @@ def proyectos_info(request):
     proyecto_usuarios = []
     for row in proyecto_usuarios_raw:
         proyecto_usuarios.append({'documento_mie_pro': row[0], 'id_pro_mie': row[1], 'nombre_rol_mie_pro': row[2], 'nit_con_mie_pro': row[3]})
-    print("Hola1")
-    print(proyecto_usuarios)
+
 
     # Obtener los roles desde la base de datos
     with connection.cursor() as cursor:
@@ -93,10 +94,28 @@ def proyectos_info(request):
         roles_raw = cursor.fetchall()  # Esto me da una lista de tuplas
         
     roles = [row[0] for row in roles_raw]
-    print("Hola")
-    print(roles)
 
 
+    # Obtener las tareas desde la base de datos
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM Tareas")
+        tareas_row = cursor.fetchall()  # Esto te da una lista de tuplas
+    
+    # Convertir los datos de tareas_row a una lista de diccionarios
+    tareas = []
+    for row in tareas_row:
+        tareas.append({
+            'id_tar': row[0],
+            'nombre_tar': row[1],
+            'descripcion_tar': row[2],
+            'fecha_inicio_tar': row[3],
+            'fecha_final_tar': row[4],
+            'presupuesto_tar': row[5],
+            'responsable_tar': row[6],
+            'id_pro_tar': row[7]
+        })
+    print("---------------")
+    print(tareas)
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT 1 
@@ -105,7 +124,7 @@ def proyectos_info(request):
         """, [usuario_actual.documento])
         show_link = cursor.fetchone() is not None  
 
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual, 'roles': roles,'show_link': show_link})
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link})
 
 
 

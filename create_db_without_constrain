@@ -47,7 +47,7 @@ CREATE TABLE Proyectos (
     NIT_con_pro VARCHAR2(30) NOT NULL
 );
 
-CREATE TABLE Roles (
+CREATE TABLE Roles1 (
     nombre_rol VARCHAR2(20) PRIMARY KEY
 );
 
