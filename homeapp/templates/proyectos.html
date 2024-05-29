@@ -148,7 +148,7 @@
                                             <i class="fa fa-search"></i>
                                         </button>
 
-                                        <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="/nueva-tarea">
+                                        <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="{% url 'nueva-tarea' proyecto.id %}">
                                             <i class="fa-solid fa-plus"></i>
                                         </a>
 
@@ -195,7 +195,7 @@
                                     </div>
                                     <ul class="list-group">
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Constructora: </span>{{ proyecto.constructora.nombre }}
+                                                class="fw-bold">Constructora: </span>{{ proyecto.nombre }}
                                         </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
                                                 class="fw-bold">Fecha de inicio: </span>{{ proyecto.fecha_inicio }}</li>
@@ -232,11 +232,13 @@
                                         </button>
                                     </div>
                                     <ul>
+
                                         {% for usuario in usuarios %}
-                                        {% if proyecto == usuario.id_proyecto %}
+                                        {% if usuario.id_pro_mie == proyecto.id %}
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <div class="fw-bold">{{ usuario.id_usuario.first_name }}</div>
-                                            Ingeniero Civil
+
+                                            <div class="fw-bold">{{ usuario.nombre }}</div>
+                                            <div>{{ usuario.nombre_rol_mie_pro }}
                                         </li>
                                         {% endif %}
                                         {% endfor %}

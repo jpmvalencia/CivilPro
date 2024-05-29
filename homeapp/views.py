@@ -13,26 +13,27 @@ def home(request):
 
 
 @login_required
-def nueva_tarea(request):
+def nueva_tarea(request, id_proyecto):
     if request.method == 'GET':
         return render(request,'nueva-tarea.html')
     else:
         try:
-            id = request.POST.get('id')
             nombre = request.POST.get('title')
             descripcion = request.POST.get('description')
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
-
+            print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto, id_proyecto)
             with connection.cursor() as cursor:
+                cursor.execute("SELECT MAX(ID_TAR) FROM TAREAS")
+                max_id = cursor.fetchone()[0]
+                id_tareas = 1 if max_id is None else max_id + 1
                 cursor.execute(
-                    "INSERT INTO Tareas (nombre_tar, descripcion_tar, fecha_inicio_tar, fecha_final_tar, presupuesto_tar) VALUES (%s, %s, %s, %s, %s)",
-                    [nombre, descripcion, fecha_inicio, fecha_final, presupuesto]
+                    "INSERT INTO Tareas (id_tar, nombre_tar, descripcion_tar, fecha_inicio_tar, fecha_final_tar, presupuesto_tar, id_pro_tar) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    [id_tareas, nombre, descripcion, fecha_inicio, fecha_final, presupuesto, id_proyecto]
                 )
             
-            return redirect('proyectos_info')
-            return redirect(proyectos_info)
+            return redirect('proyectos')
         except:
             return render(request, 'nueva-tarea.html', {'error': 'Ingresa datos válidos.'})
         
@@ -48,13 +49,14 @@ def nuevo_proyecto(request):
             fecha_inicio = request.POST.get('start-date')
             fecha_final = request.POST.get('end-date')
             presupuesto = request.POST.get('presupuesto')
+            nit = request.user.documento
 
-            print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto)
+            print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto, nit)
             
             with connection.cursor() as cursor:
                 cursor.execute(
                     "INSERT INTO Proyectos (id_pro, nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, NIT_con_pro) VALUES (proyecto_seq.NEXTVAL, %s, %s, %s, %s, %s, %s)",
-                    [nombre, descripcion, fecha_inicio, fecha_final, presupuesto, 4]
+                    [nombre, descripcion, fecha_inicio, fecha_final, presupuesto, nit]
                 )
             
             return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
@@ -66,26 +68,64 @@ def nuevo_proyecto(request):
 def proyectos_info(request):
     usuario_actual = request.user
     
-    # Consulta cruda para obtener todos los proyectos
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM proyectos")
-        proyectos_raw = cursor.fetchall()
-
-    # Convertir los datos de proyectos a una lista de diccionarios
-    proyectos = []
-    for row in proyectos_raw:
-        proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'fecha_inicio': row[3], 'fecha_final': row[4], 'presupuesto': row[5], 'constructora_id': row[6]})
+        cursor.execute("""
+            SELECT 1 
+            FROM constructoras 
+            WHERE nit_con = %s
+        """, [usuario_actual.documento])
+        show_link = cursor.fetchone() is not None  
     
+        # cursor.execute("SELECT proyectos.id_pro, tareas.* FROM proyectos INNER JOIN tareas ON tareas.id_pro_tar = proyectos.id_pro")
+    if (show_link == False):
+
+        # Consulta cruda para obtener todos los proyectos
+        with connection.cursor() as cursor:
+            cursor.execute("""SELECT *
+                            FROM proyectos 
+                            WHERE id_pro IN (
+                                SELECT Id_pro_mie 
+                                FROM miembros_proyectos 
+                                WHERE documento_mie_pro = %s)
+                            """, [usuario_actual.id])
+            proyecto_raw = cursor.fetchall()
+        
+        # Convertir los datos de proyectos a una lista de diccionarios
+        proyectos = []
+        for row in proyecto_raw:
+            proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'fecha_inicio': row[3], 'fecha_final': row[4], 'presupuesto': row[5], 'constructora_id': row[6]})
+    else:
+        # Consulta cruda para obtener todos los proyectos
+        with connection.cursor() as cursor:
+            cursor.execute("""SELECT *
+                            FROM proyectos 
+                            WHERE nit_con_pro IN (
+                                SELECT nit_con 
+                                FROM constructoras
+                                WHERE nit_con = %s)
+                            """, [usuario_actual.id])
+            proyecto_raw = cursor.fetchall()
+            
+        # Convertir los datos de proyectos a una lista de diccionarios
+        proyectos = []
+        for row in proyecto_raw:
+            proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'fecha_inicio': row[3], 'fecha_final': row[4], 'presupuesto': row[5], 'constructora_id': row[6]})
+        
+
     # Consulta cruda para obtener todos los usuarios relacionados con proyectos
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM miembros_proyectos")
+        cursor.execute("""SELECT miembros_proyectos.*, 
+                       authentapp_usuario.first_name
+                        FROM miembros_proyectos
+                        INNER JOIN authentapp_usuario 
+                       ON miembros_proyectos.Documento_mie_pro = authentapp_usuario.id""")
         proyecto_usuarios_raw = cursor.fetchall()
     
     # NO FUNCIONA
     # Convertir los datos de proyecto_usuarios a una lista de diccionarios
     proyecto_usuarios = []
     for row in proyecto_usuarios_raw:
-        proyecto_usuarios.append({'documento_mie_pro': row[0], 'id_pro_mie': row[1], 'nombre_rol_mie_pro': row[2], 'nit_con_mie_pro': row[3]})
+        proyecto_usuarios.append({'documento_mie_pro': row[0], 'id_pro_mie': row[1], 'nombre_rol_mie_pro': row[2], 'nit_con_mie_pro': row[3], 'nombre': row[4]})
 
 
     # Obtener los roles desde la base de datos
@@ -94,7 +134,7 @@ def proyectos_info(request):
         roles_raw = cursor.fetchall()  # Esto me da una lista de tuplas
         
     roles = [row[0] for row in roles_raw]
-    print(roles)
+    
 
     # Obtener las tareas desde la base de datos
     with connection.cursor() as cursor:
@@ -114,18 +154,8 @@ def proyectos_info(request):
             'responsable_tar': row[6],
             'id_pro_tar': row[7]
         })
-    print("---------------")
-    print(tareas)
-    with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT 1 
-            FROM constructoras 
-            WHERE nit_con = %s
-        """, [usuario_actual.documento])
-        show_link = cursor.fetchone() is not None  
 
-        # cursor.execute("SELECT proyectos.id_pro, tareas.* FROM proyectos INNER JOIN tareas ON tareas.id_pro_tar = proyectos.id_pro")
-        
+
 
 
     return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link})
