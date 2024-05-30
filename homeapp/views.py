@@ -76,6 +76,7 @@ def proyectos_info(request):
     for row in proyectos_raw:
         proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'fecha_inicio': row[3], 'fecha_final': row[4], 'presupuesto': row[5], 'constructora_id': row[6]})
     
+    print(proyectos, '--------------')
     # Consulta cruda para obtener todos los usuarios relacionados con proyectos
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM miembros_proyectos")
@@ -94,6 +95,7 @@ def proyectos_info(request):
         roles_raw = cursor.fetchall()  # Esto me da una lista de tuplas
         
     roles = [row[0] for row in roles_raw]
+    print(roles_raw, '------')
 
 
     # Obtener las tareas desde la base de datos
