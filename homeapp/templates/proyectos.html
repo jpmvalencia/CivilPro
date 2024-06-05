@@ -1,0 +1,515 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <style>
+        .progress {
+          height: 8px; /* Ajusta este valor según lo delgado que quieras la barra de progreso */
+        }
+
+        .container2 {
+  display: block;
+  position: relative;
+  padding: 1px 145px 8px 3em;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-align:justify;
+}
+
+/* Hide the browser's default checkbox */
+.container2 input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container2:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container2 input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container2 input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container2 .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
+#confirmDeleteModal{
+    background-color: #212529;
+}
+
+.modal-content{
+    background-color: #9BA4B5;
+}
+
+.margen{
+        width: 400px;
+        height: 300px;
+        border: 10px ;
+        border-bottom: 10px;
+        margin: 40px;
+        margin-bottom: 40px;
+        padding-bottom: 50px;
+    }
+
+    .btn-fixed-width {
+        width: 350px; /* Establece el ancho fijo deseado */
+        text-align: left; /* Alinea el texto a la izquierda dentro del botón */
+        margin-right: 10px; /* Ajusta el margen entre botones según sea necesario */
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+
+
+   </style>
+</head>
+
+
+
+<div class="container p-5 bg-annapolis-blue rounded-10" style="min-height: calc(100vh - 275px);">
+    <!-- Button trigger modal -->
+    <div class="text-center">
+        {% for proyecto in proyectos %}
+        <a class="m-1" href="#" data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}"
+            style="color: inherit; text-decoration: inherit; display: inline-block;">
+            <div class="card text-center bg-midnight-express rounded-10 zoom-in zoom-out" style="width: 18rem;">
+                <div style="width: 100%; height: 180px;">
+                    <img src="https://th.bing.com/th/id/OIP.p3asnh-5bcoAzkwRnvXUgwHaEK?rs=1&pid=ImgDetMain" class="card-img-top"
+                        alt="yugiweed" style="height: 180px; object-fit: cover;">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">{{ proyecto.nombre }}</h5>
+                    <p class="card-text">{{ proyecto.descripcion }}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    <!-- Modal -->
+    {% for proyecto in proyectos %}
+    <div class="modal fade" id="item_{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl modal-fullscreen-lg-down">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-header">
+                    <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.nombre }}</h2>
+                    
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
+                    {% if show_link %}
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    {% endif %}
+
+                </div>
+                
+                <div class="modal-body">
+                    <div style="width: 100%; height: 240px;">
+                        <img class="d-block mx-auto rounded-10"
+                            src="https://th.bing.com/th/id/OIP.p3asnh-5bcoAzkwRnvXUgwHaEK?rs=1&pid=ImgDetMain" alt="construcción"
+                            style="height: 100%; width: 450px; max-width: 100%;  object-fit: cover;">
+                    </div>
+
+                    <div class="container mt-3">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                
+                                <div class="d-flex justify-content-between bg-midnight-express rounded-10" style="width: 80%; height: 40px; text-align: center;">
+                                    <h3 class="fw-bolder fs-4 lh-base">Tareas</h3>
+                                    <div style="display: flex; gap: 10px;">
+
+                                        <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
+                                            data-bs-target="#buscar-tarea" data-bs-dismiss="modal" data-bs-toggle="modal">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+
+                                        <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="{% url 'nueva-tarea' proyecto.id %}">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+
+                                    </div>
+                                </div>
+                                
+                                <h1></h1>
+                                <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
+                                    <div class="col-lg-5">
+                                        <div class="margen">
+                                            {% for tarea in tareas %}
+                                            {% if tarea.id_pro_tar == proyecto.id %}
+                                            
+                                            <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
+                                                <label class="container2">{{tarea.nombre_tar}}
+                                                    <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
+                                                <span class="checkmark"></span>
+                                            </label> 
+                                            </button>
+                                            <h1></h1>
+
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>        
+                                    
+                                </div>
+                                
+                                
+                            </div>
+
+
+                            <div class="col-lg-5">
+                                <div class="row">
+                                    <div class="d-flex justify-content-between bg-midnight-express rounded-10">
+                                        <h3 class="fw-bolder fs-4 lh-base">Información del proyecto</h3>
+                                        <button type="button" class="btn">
+                                            <i
+                                                class="fa-solid fa-pen-to-square text-distant-horizon zoom-in zoom-out"></i>
+                                        </button>
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
+                                                class="fw-bold">Constructora: </span>{{ proyecto.nombre }}
+                                        </li>
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
+                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.fecha_inicio }}</li>
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
+                                                class="fw-bold">Fecha de finalización: </span>{{ proyecto.fecha_final }}
+                                        </li>
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
+                                            <span class="d-inline-flex flex-items-center flex-nowrap no-underline text-small mr-3">
+                                                <span class="color-fg-default text-bold mr-1">Presupuesto: </span>
+                                                <span>{{ proyecto.presupuesto }},00 %</span>
+                                            </span>
+                                            <div class="progress">
+                                                <div class="progress-bar" role="progressbar" aria-label="Presupuesto" 
+                                                     style="width: {{ proyecto.presupuesto }}%;" 
+                                                     aria-valuenow="{{ proyecto.presupuesto }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100"></div>
+                                            </div>
+                                        </li>
+                                        
+                                        
+                                        
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
+                                                class="fw-bold">Estado: </span>{{ proyecto.estado }}</li>
+                                    </ul>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="d-flex justify-content-between bg-midnight-express rounded-10">
+                                        <h3 class="fw-bolder fs-4 lh-base">Personal</h3>
+                                        <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
+                                            data-bs-target="#busqueda-usuario_{{ proyecto.id }}" data-bs-dismiss="modal" data-bs-toggle="modal">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <ul>
+
+                                        {% for usuario in usuarios %}
+                                        {% if usuario.id_pro_mie == proyecto.id %}
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
+
+                                            <div class="fw-bold">{{ usuario.nombre }}</div>
+                                            <div>{{ usuario.nombre_rol_mie_pro }}
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">¿Está seguro que desea eliminar este proyecto?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Toda la información será eliminada permanentemente.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmDeleteBtn">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    
+    {% for proyecto in proyectos %}
+    <div class="modal fade" id="agregar-usuario-modal-{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="max-height: 250px;">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-header">
+                    <h2 class="modal-title text-capitalize" id="profileModalLabel">Perfil de Usuario</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center rounded-circle">
+                        <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="height: 120px;">
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold" id="sel-user-name-{{ proyecto.id }}"></div>
+                        <div id="sel-user-doc-{{ proyecto.id }}"></div>
+                        <div id="sel-user-mail-{{ proyecto.id }}"></div>
+                        <div class="d-flex justify-content-center">
+                            <select class="form-select text-center" style="max-width: 60%;" id="sel-user-rol-{{ proyecto.id }}">
+                                <option value="">Seleccionar Rol</option>
+                                {% for rol in roles %}
+                                    <option value="{{ rol }}">{{ rol }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#busqueda-usuario_{{ proyecto.id }}">Atrás</button>
+                    <button type="button" class="btn bg-midnight-express text-distant-horizon" data-bs-dismiss="modal"
+                        data-bs-toggle="modal" data-bs-target="#item_{{ proyecto.id }}"
+                        onclick="addUserToProject('{{ proyecto.id }}')">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% for proyecto in proyectos %}
+    <div class="modal fade" id="busqueda-usuario_{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-body">
+                    <input type="email" name="busqueda" data-project-id="{{ proyecto.id }}" class="form-control text-distant-horizon" autocomplete="off"
+                        placeholder="Correo del empleado a agregar.">
+                    <ul class="list-group" id="user-data-{{ proyecto.id }}" style="display: none;">
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#agregar-usuario-modal-{{ proyecto.id }}" onclick="getUserSel('{{ proyecto.id }}')">
+                            <li class="list-group-item border-0 bg-transparent text-distant-horizon">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil"
+                                            style="height: 64px;">
+                                    </div>
+                                    <div class="col-8 d-flex align-items-center">
+                                        <div>
+                                            <div class="fw-bold" id="user-name-{{ proyecto.id }}"></div>
+                                            <div id="user-mail-{{ proyecto.id }}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+    {% if show_link %}
+    <a class="btn d-flex justify-content-center align-items-center bg-light rounded-circle text-midnight-express zoom-in zoom-out"
+        href="/nuevo-proyecto" style="height: 64px; width: 64px; position: fixed; right: 64px; bottom: 64px;">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+    {% endif %}
+
+    <div class="modal fade" id="buscar-tarea" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-body">
+                    <input type="text" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
+                        placeholder="Buscar tareas">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for tarea in tareas %}
+    <div class="modal fade" id="tareaModal" tabindex="-1" aria-labelledby="tareaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tamaño pequeño -->
+            <div class="modal-content bg-annapolis-blue rounded-10">
+                <div class="modal-header">
+                    <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre}}</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+              <div class="modal-body">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                        <!-- Columna izquierda -->
+                        <div class="col-md-6">
+                            <!-- Campo de entrada para el nombre -->
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Descripción</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.descripcion }}">
+                            </div>
+
+                            <!-- Campo de entrada para el apellido -->
+                            <div class="mb-3">
+                                <label for="start-date" class="form-label">Fecha de inicio:</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio }}">
+                            </div>
+                            <!-- Campo de entrada para el email -->
+                            <div class="mb-3">
+                                <label for="end-date" class="form-label">Fecha de finalización:</label>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final }}">
+                            </div>
+                        </div>
+                        <!-- Columna derecha -->
+                        <div class="col-md-6">
+                            <!-- Campo de entrada para la contraseña -->
+                            <div class="mb-3">
+                                <label for="presupuesto" class="form-label">Presupuesto</label>
+                                <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.presupuesto }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="responsable" class="form-label">Responsable</label>
+                                <input type="text" readonly="readonly" step="0.01" name="responsable" id="responsable" class="form-control text-distant-horizon" value="">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+                    <!-- Puedes agregar más información aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+ 
+</div>
+
+<script>
+    document.querySelectorAll('input[name="busqueda"]').forEach(input => {
+        input.addEventListener('input', function () {
+            const searchInput = input.value;
+            const projectId = input.dataset.projectId; // Assuming you set a data attribute for project ID
+            fetch(`/buscar-usuario/?query=${searchInput}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`${searchInput}`);
+                    const userDataDiv = document.getElementById(`user-data-${projectId}`);
+                    if (data.length > 0) {
+                        // Assuming data is an array of users
+                        const userData = data[0]; // You may need to adjust this based on your response structure
+                        document.getElementById(`user-name-${projectId}`).textContent = userData.firstname;
+                        document.getElementById(`user-mail-${projectId}`).textContent = userData.email;
+                        userDataDiv.style.display = 'block';
+                    } else {
+                        userDataDiv.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+
+    
+    function getUserSel(projectId) {
+        const modal = document.querySelector(`#busqueda-usuario_${projectId}`);
+        const input = modal.querySelector('input[name="busqueda"]');
+        const userMail = input.value;
+
+        fetch(`/buscar-usuario/?query=${userMail}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const userData = data[0]; // Assuming only one user is returned
+                    document.getElementById(`sel-user-name-${projectId}`).textContent = userData.firstname + ' ' + userData.lastname;
+                    document.getElementById(`sel-user-doc-${projectId}`).textContent = userData.doc;
+                    document.getElementById(`sel-user-mail-${projectId}`).textContent = userData.email;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    function addUserToProject(projectId) {
+
+    const userEmail = document.getElementById(`sel-user-mail-${projectId}`).textContent; // Retrieve email from the selected user
+    const userRol = document.getElementById(`sel-user-rol-${projectId}`).value; // Retrieve selected role
+
+    fetch(`/agregar-usuario/?projectId=${projectId}&userEmail=${userEmail}&rolUser=${userRol}`)
+        .then(response => {
+            // Handle response if needed
+            // Maybe close modal or show a message
+        })
+        .catch(error => console.error('Error:', error));
+
+
+    }
+
+    
+    document.querySelectorAll('[data-bs-target="#confirmDeleteModal"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const proyectoId = this.getAttribute('data-proyecto-id');
+            document.getElementById('confirmDeleteBtn').setAttribute('data-proyecto-id', proyectoId);
+        });
+    });
+
+    // Configura la URL de eliminación cuando se presiona el botón de confirmación
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        const proyectoId = this.getAttribute('data-proyecto-id');
+        const url = `{% url 'eliminar_proyecto' 0 %}`.replace('0', proyectoId);  // Reemplaza '0' con el proyecto_id real
+        window.location.href = url;
+    });
+
+</script>
+
+
+{% endblock %}

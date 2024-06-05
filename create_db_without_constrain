@@ -1,0 +1,87 @@
+DROP TABLE IF EXISTS Documentos_Tareas;
+DROP TABLE IF EXISTS Documentos_Proyectos;
+DROP TABLE IF EXISTS Tareas;
+DROP TABLE IF EXISTS Miembros_Proyectos;
+DROP TABLE IF EXISTS Proyectos;
+DROP TABLE IF EXISTS Constructoras;
+DROP TABLE IF EXISTS Estudios_Usuarios;
+DROP TABLE IF EXISTS Usuarios;
+DROP TABLE IF EXISTS Estudios;
+DROP TABLE IF EXISTS Roles;
+
+CREATE TABLE Usuarios (
+    documento_usu VARCHAR2(20) PRIMARY KEY,
+    nombre_usu VARCHAR2(30) NOT NULL,
+    apellido1_usu VARCHAR2(150) NOT NULL,
+    apellido2_usu VARCHAR2(150) NOT NULL,
+    correo_usu VARCHAR2(100) NOT NULL,
+    contraseña_usu VARCHAR2(50) NOT NULL,
+    telefono_usu NUMBER
+);
+
+CREATE TABLE Estudios (
+    id_est NUMBER PRIMARY KEY,
+    nombre_est VARCHAR2(100) NOT NULL
+);
+
+CREATE TABLE Estudios_Usuarios (
+    documento_usu_est VARCHAR2(20),
+    id_est_usu NUMBER
+);
+
+CREATE TABLE Constructoras (
+    NIT_con VARCHAR2(30) PRIMARY KEY,
+    nombre_con VARCHAR2(100) NOT NULL,
+    correo_con VARCHAR2(100) NOT NULL,
+    contraseña_con VARCHAR2(50) NOT NULL,
+    telefono_con NUMBER
+);
+
+CREATE TABLE Proyectos (
+    id_pro NUMBER,
+    nombre_pro VARCHAR2(100) NOT NULL,
+    descripcion_pro VARCHAR2(300) NOT NULL,
+    fecha_inicio_pro DATE NOT NULL,
+    fecha_final_pro DATE NOT NULL,
+    presupuesto_pro NUMBER,
+    NIT_con_pro VARCHAR2(30) NOT NULL
+);
+
+CREATE TABLE Roles1 (
+    nombre_rol VARCHAR2(20) PRIMARY KEY
+);
+
+CREATE TABLE Miembros_Proyectos (
+    documento_mie_pro VARCHAR2(20),
+    id_pro_mie NUMBER,
+    nombre_rol_mie_pro VARCHAR2(20),
+    NIT_con_mie_pro VARCHAR2(30)
+);
+
+CREATE TABLE Tareas (
+    id_tar NUMBER,
+    nombre_tar VARCHAR2(100) NOT NULL,
+    descripcion_tar VARCHAR2(300) NOT NULL,
+    fecha_inicio_tar DATE NOT NULL,
+    fecha_final_tar DATE NOT NULL,
+    presupuesto_tar NUMBER,
+    responsable_tar VARCHAR2(20),
+    id_pro_tar NUMBER
+);
+
+CREATE TABLE Documentos_Tareas (
+    id_doc_tar NUMBER,
+    ruta_doc_tar VARCHAR2(500) NOT NULL,
+    descripcion_doc_tar VARCHAR2(300) NOT NULL,
+    id_tar_doc_tar NUMBER,
+    responsable_doc_tar VARCHAR2(20),
+    id_pro_doc_tar NUMBER
+);
+
+CREATE TABLE Documentos_Proyectos (
+    id_doc_pro NUMBER,
+    ruta_doc_pro VARCHAR2(500) NOT NULL,
+    descripcion_doc_pro VARCHAR2(300) NOT NULL,
+    id_pro_doc_pro NUMBER,
+    NIT_con_doc_pro VARCHAR2(30)
+);
