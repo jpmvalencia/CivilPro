@@ -62,6 +62,21 @@ def nuevo_proyecto(request):
             return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
         except Exception as e:
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
+        
+
+@login_required
+def eliminar_proyecto(request, id_proyecto):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "DELETE FROM Proyectos WHERE id_pro = %s", [id_proyecto]
+            )
+            cursor.execute(
+                "DELETE FROM Tareas WHERE id_pro_tar = %s;", [id_proyecto]
+            )
+        return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
+    except Exception as e:
+        return redirect('proyectos')
 
 
 @login_required
