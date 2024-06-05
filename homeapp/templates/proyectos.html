@@ -76,6 +76,15 @@
   transform: rotate(45deg);
 }
 
+
+#confirmDeleteModal{
+    background-color: #212529;
+}
+
+.modal-content{
+    background-color: #9BA4B5;
+}
+
 .margen{
         width: 400px;
         height: 300px;
@@ -97,6 +106,7 @@
 
    </style>
 </head>
+
 
 
 <div class="container p-5 bg-annapolis-blue rounded-10" style="min-height: calc(100vh - 275px);">
@@ -126,8 +136,17 @@
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
                     <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.nombre }}</h2>
+                    
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
+                    {% if show_link %}
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    {% endif %}
+
                 </div>
+                
                 <div class="modal-body">
                     <div style="width: 100%; height: 240px;">
                         <img class="d-block mx-auto rounded-10"
@@ -252,6 +271,24 @@
         </div>
     </div>
     {% endfor %}
+
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">¿Está seguro que desea eliminar este proyecto?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Toda la información será eliminada permanentemente.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmDeleteBtn">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  
     
     {% for proyecto in proyectos %}
     <div class="modal fade" id="agregar-usuario-modal-{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
@@ -453,8 +490,24 @@
             // Maybe close modal or show a message
         })
         .catch(error => console.error('Error:', error));
-}
 
+
+    }
+
+    
+    document.querySelectorAll('[data-bs-target="#confirmDeleteModal"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const proyectoId = this.getAttribute('data-proyecto-id');
+            document.getElementById('confirmDeleteBtn').setAttribute('data-proyecto-id', proyectoId);
+        });
+    });
+
+    // Configura la URL de eliminación cuando se presiona el botón de confirmación
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        const proyectoId = this.getAttribute('data-proyecto-id');
+        const url = `{% url 'eliminar_proyecto' 0 %}`.replace('0', proyectoId);  // Reemplaza '0' con el proyecto_id real
+        window.location.href = url;
+    });
 
 </script>
 

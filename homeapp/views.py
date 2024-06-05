@@ -62,6 +62,21 @@ def nuevo_proyecto(request):
             return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
         except Exception as e:
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
+        
+
+@login_required
+def eliminar_proyecto(request, id_proyecto):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "DELETE FROM Proyectos WHERE id_pro = %s", [id_proyecto]
+            )
+            cursor.execute(
+                "DELETE FROM Tareas WHERE id_pro_tar = %s;", [id_proyecto]
+            )
+        return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
+    except Exception as e:
+        return redirect('proyectos')
 
 
 @login_required
@@ -76,6 +91,7 @@ def proyectos_info(request):
         """, [usuario_actual.documento])
         show_link = cursor.fetchone() is not None  
     
+    print(show_link)
         # cursor.execute("SELECT proyectos.id_pro, tareas.* FROM proyectos INNER JOIN tareas ON tareas.id_pro_tar = proyectos.id_pro")
     if (show_link == False):
 
@@ -103,14 +119,17 @@ def proyectos_info(request):
                                 SELECT nit_con 
                                 FROM constructoras
                                 WHERE nit_con = %s)
-                            """, [usuario_actual.id])
+                            """, [usuario_actual.documento])
             proyecto_raw = cursor.fetchall()
+
+        print(usuario_actual.documento)
             
         # Convertir los datos de proyectos a una lista de diccionarios
         proyectos = []
         for row in proyecto_raw:
             proyectos.append({'id': row[0], 'nombre': row[1], 'descripcion': row[2], 'fecha_inicio': row[3], 'fecha_final': row[4], 'presupuesto': row[5], 'constructora_id': row[6]})
         
+    print(proyectos)
 
     # Consulta cruda para obtener todos los usuarios relacionados con proyectos
     with connection.cursor() as cursor:
@@ -127,6 +146,7 @@ def proyectos_info(request):
     for row in proyecto_usuarios_raw:
         proyecto_usuarios.append({'documento_mie_pro': row[0], 'id_pro_mie': row[1], 'nombre_rol_mie_pro': row[2], 'nit_con_mie_pro': row[3], 'nombre': row[4]})
 
+    print(proyecto_usuarios)
 
     # Obtener los roles desde la base de datos
     with connection.cursor() as cursor:
