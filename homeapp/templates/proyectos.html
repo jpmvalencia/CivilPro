@@ -383,7 +383,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tamaño pequeño -->
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
-                    <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre}}</h2>
+                    <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre_tar}}</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 
@@ -397,18 +397,18 @@
 
                             <div class="mb-3">
                                 <label for="description" class="form-label">Descripción</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.descripcion }}">
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.descripcion_tar }}">
                             </div>
 
                             <!-- Campo de entrada para el apellido -->
                             <div class="mb-3">
                                 <label for="start-date" class="form-label">Fecha de inicio:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio }}">
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio_tar }}">
                             </div>
                             <!-- Campo de entrada para el email -->
                             <div class="mb-3">
                                 <label for="end-date" class="form-label">Fecha de finalización:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final }}">
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final_tar }}">
                             </div>
                         </div>
                         <!-- Columna derecha -->
@@ -416,13 +416,13 @@
                             <!-- Campo de entrada para la contraseña -->
                             <div class="mb-3">
                                 <label for="presupuesto" class="form-label">Presupuesto</label>
-                                <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.presupuesto }}">
+                                <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.presupuesto_tar }}">
                             </div>
 
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <label for="responsable" class="form-label">Responsable</label>
-                                <input type="text" readonly="readonly" step="0.01" name="responsable" id="responsable" class="form-control text-distant-horizon" value="">
-                            </div>
+                                <input type="text" readonly="readonly" step="0.01" name="responsable" id="responsable" class="form-control text-distant-horizon" value="{{ tarea.responsable_tar}}">
+                            </div> -->
                         </div>
                     </div>
                 </form>
