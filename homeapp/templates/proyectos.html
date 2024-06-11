@@ -81,6 +81,10 @@
     background-color: #212529;
 }
 
+#confirmDeleteTar{
+    background-color: #212529;
+}
+
 .modal-content{
     background-color: #394867;
 }
@@ -189,11 +193,7 @@
                                         <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
                                             data-bs-target="#buscar-tarea" data-bs-dismiss="modal" data-bs-toggle="modal">
                                             <i class="fa fa-search"></i>
-                                        </button>
-
-                                        <button type="button" class="btn-del2" data-bs-target="#confirmDeleteTar" data-tarea-id="{{ tarea.id }}">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </button>
+                                        </button> 
 
                                         <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="{% url 'nueva-tarea' proyecto.id %}">
                                             <i class="fa-solid fa-plus"></i>
@@ -319,21 +319,6 @@
     </div>
 
 
-    <div class="modal fade" id="confirmDeleteTar" tabindex="-1" aria-labelledby="confirmDeleteTar" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteTarLabel">¿Está seguro que desea eliminar esta tarea?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">Toda la información será eliminada permanentemente.</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-primary" id="confirmDeleteBtn">Sí</button>
-                </div>
-            </div>
-        </div>
-    </div>
   
     
     {% for proyecto in proyectos %}
@@ -435,6 +420,12 @@
                 <div class="modal-header">
                     <h2 class="modal-title text-capitalize" id="profileModalLabel-{{ tarea.id_tar }}">{{tarea.nombre_tar}}</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    <button type="button" class="btn-del2" data-bs-toggle="modal"  data-bs-target="#confirmDeleteTar" data-tarea-id="{{ tarea.id_tar }}">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+
+                    
                 </div>
                 
               <div class="modal-body">
@@ -486,6 +477,23 @@
     </div>
     {% endfor %}
 
+
+    
+    <div class="modal fade" id="confirmDeleteTar" tabindex="-1" aria-labelledby="confirmDeleteTar" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteTarLabel">¿Está seguro que desea eliminar esta tarea?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Toda la información será eliminada permanentemente.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmDeleteBtnTar">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
  
 </div>
 
@@ -560,6 +568,19 @@
         const url = `{% url 'eliminar_proyecto' 0 %}`.replace('0', proyectoId);  // Reemplaza '0' con el proyecto_id real
         window.location.href = url;
     });
+
+    document.querySelectorAll('[data-bs-target="#confirmDeleteTar"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const tareaId = this.getAttribute('data-tarea-id');
+            document.getElementById('confirmDeleteBtnTar').setAttribute('data-tarea-id', tareaId);
+        });
+    });
+    document.getElementById('confirmDeleteBtnTar').addEventListener('click', function () {
+        const tareaId = this.getAttribute('data-tarea-id');
+        const url = `{% url 'eliminar_tarea' 0 %}`.replace('0', tareaId);  // Reemplaza '0' con el proyecto_id real
+        window.location.href = url;
+    });
+   
 
  
 
