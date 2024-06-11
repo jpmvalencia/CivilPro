@@ -82,8 +82,32 @@
 }
 
 .modal-content{
-    background-color: #9BA4B5;
+    background-color: #394867;
 }
+
+#archivoModal{
+    background-color: #212529;
+}
+
+
+.btn-del {
+    color: #000;
+    background-color: #394867;
+    border: none;
+    padding-left: 45em;
+    font-size: 20px;
+}
+
+.btn-del2 {
+    color: #FFF;
+    background-color:#212A3E;
+    border: none;
+}
+
+#descripcion{
+    color:#FFF;
+}
+
 
 .margen{
         width: 400px;
@@ -137,13 +161,13 @@
                 <div class="modal-header">
                     <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.nombre }}</h2>
                     
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    
                     {% if show_link %}
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
+                    <button type="button" class="btn-del" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                     {% endif %}
+                    
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                 </div>
                 
@@ -167,6 +191,10 @@
                                             <i class="fa fa-search"></i>
                                         </button>
 
+                                        <button type="button" class="btn-del2" data-bs-target="#confirmDeleteTar" data-tarea-id="{{ tarea.id }}">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+
                                         <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="{% url 'nueva-tarea' proyecto.id %}">
                                             <i class="fa-solid fa-plus"></i>
                                         </a>
@@ -186,8 +214,6 @@
                                                     <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}">
                                                     <span class="checkmark"></span>
                                                 </label>
-                                                <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
-                                                <span class="checkmark"></span>
                                             </label> 
                                             </button>
                                             <h1></h1>
@@ -264,6 +290,7 @@
                                     </ul>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -272,12 +299,31 @@
     </div>
     {% endfor %}
 
+    
+
 
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="confirmDeleteModalLabel">¿Está seguro que desea eliminar este proyecto?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Toda la información será eliminada permanentemente.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmDeleteBtn">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="confirmDeleteTar" tabindex="-1" aria-labelledby="confirmDeleteTar" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteTarLabel">¿Está seguro que desea eliminar esta tarea?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">Toda la información será eliminada permanentemente.</div>
@@ -327,6 +373,8 @@
         </div>
     </div>
     {% endfor %}
+
+   
     
     {% for proyecto in proyectos %}
     <div class="modal fade" id="busqueda-usuario_{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
@@ -378,6 +426,8 @@
             </div>
         </div>
     </div>
+
+    
     {% for tarea in tareas %}
     <div class="modal fade" id="tareaModal-{{ tarea.id_tar }}"" tabindex="-1" aria-labelledby="tareaModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tamaño pequeño -->
@@ -397,17 +447,18 @@
 
                             <div class="mb-3">
                                 <label for="description" class="form-label">Descripción</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description-{{ tarea.id_tar }}" name="description" value="{{ tarea.descripcion_tar }}">
-                            </div>
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description-{{ tarea.id_tar }}" name="description" value="{{ tarea.descripcion_tar }}">                            </div>
 
                             <!-- Campo de entrada para el apellido -->
                             <div class="mb-3">
                                 <label for="start-date" class="form-label">Fecha de inicio:</label>
+
                                 <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date-{{ tarea.id_tar }}" name="start-date" value="{{ tarea.fecha_inicio_tar }}">
                             </div>
                             <!-- Campo de entrada para el email -->
                             <div class="mb-3">
                                 <label for="end-date" class="form-label">Fecha de finalización:</label>
+
                                 <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date-{{ tarea.id_tar }}" name="end-date" value="{{ tarea.fecha_final_tar }}">
                             </div>
                         </div>
@@ -416,6 +467,7 @@
                             <!-- Campo de entrada para la contraseña -->
                             <div class="mb-3">
                                 <label for="presupuesto" class="form-label">Presupuesto</label>
+
                                 <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto-{{ tarea.id_tar }}" class="form-control text-distant-horizon" value="{{ tarea.presupuesto_tar }}">
                             </div>
 
@@ -508,6 +560,8 @@
         const url = `{% url 'eliminar_proyecto' 0 %}`.replace('0', proyectoId);  // Reemplaza '0' con el proyecto_id real
         window.location.href = url;
     });
+
+ 
 
 </script>
 

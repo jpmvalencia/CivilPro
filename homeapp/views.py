@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import connection
+from django.core.files.storage import FileSystemStorage
 from .models import Usuario
 from .models import Proyecto, ProyectoUsuario, Tarea
 from authentapp.models import Usuario
@@ -63,6 +64,7 @@ def nuevo_proyecto(request):
         except Exception as e:
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
         
+        
 
 @login_required
 def eliminar_proyecto(request, id_proyecto):
@@ -74,10 +76,22 @@ def eliminar_proyecto(request, id_proyecto):
             cursor.execute(
                 "DELETE FROM Tareas WHERE id_pro_tar = %s;", [id_proyecto]
             )
-        return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
+        return redirect('proyectos_info')  
     except Exception as e:
         return redirect('proyectos')
+    
 
+@login_required
+def eliminar_tarea(request, id_tarea):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "DELETE FROM Tareas WHERE id_tar = %s;", [id_tarea]
+            )
+        return redirect('proyectos_info')  
+    except Exception as e:
+        return redirect('proyectos')
+    
 
 @login_required
 def proyectos_info(request):
