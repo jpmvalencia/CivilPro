@@ -103,9 +103,10 @@
 }
 
 .btn-del2 {
-    color: #FFF;
-    background-color:#212A3E;
+    color: #000;
+    background-color:#394867;
     border: none;
+    padding-left: 38em;
 }
 
 #descripcion{
@@ -419,12 +420,12 @@
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
                     <h2 class="modal-title text-capitalize" id="profileModalLabel-{{ tarea.id_tar }}">{{tarea.nombre_tar}}</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                     <button type="button" class="btn-del2" data-bs-toggle="modal"  data-bs-target="#confirmDeleteTar" data-tarea-id="{{ tarea.id_tar }}">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
 
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     
                 </div>
                 
