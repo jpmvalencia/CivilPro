@@ -134,7 +134,7 @@ def proyectos_info(request):
     # Consulta cruda para obtener todos los usuarios relacionados con proyectos
     with connection.cursor() as cursor:
         cursor.execute("""SELECT miembros_proyectos.*, 
-                       authentapp_usuario.first_name
+                       authentapp_usuario.nombre_usu
                         FROM miembros_proyectos
                         INNER JOIN authentapp_usuario 
                        ON miembros_proyectos.Documento_mie_pro = authentapp_usuario.id""")

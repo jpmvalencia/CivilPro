@@ -1,15 +1,78 @@
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-class Usuario(AbstractUser):
-    documento = models.CharField(max_length=100)
-    codigo_pais = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=20)
-    #nacimiento = models.DateField
+class UsuarioManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('El usuario debe tener un nombre de usuario')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(username, password, **extra_fields)
+
+class ConstructoraManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('La constructora debe tener un nombre de usuario')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(username, password, **extra_fields)
+
+class UsuarioBase(AbstractBaseUser):
+    username = models.CharField(max_length=255, unique=True)
+    password = models.CharField(max_length=255)
+
+    USERNAME_FIELD = 'username'
+
+    class Meta:
+        abstract = True
+
+class Usuario(UsuarioBase):
+    documento_usu = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    nombre_usu = models.CharField(max_length=255, null=False, blank=False)
+    apellido_usu = models.CharField(max_length=255, null=False, blank=False)
+    telefono_usu = models.CharField(max_length=255, null=True, blank=True)
+    correo_usu = models.EmailField(max_length=255, null=False, blank=False)
+    codigo_pais = models.CharField(max_length=255)
+    objects = UsuarioManager()
 
     def __str__(self):
-        return self.first_name + " " + self.last_name if (self.username != 'admin') else 'admin'
+        return self.nombre
+
+class Constructora(UsuarioBase):
+    nit_con = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    nombre_con = models.CharField(max_length=255, null=False, blank=False)
+    correo_con = models.EmailField(max_length=255, null=False, blank=False)
+    telefono_con = models.CharField(max_length=255, null=True, blank=True)
+    objects = ConstructoraManager()
+
+    def __str__(self):
+        return self.razon_social
+
+# Create your models here.
+# class Usuario(AbstractUser):
+#     documento = models.CharField(max_length=100)
+#     codigo_pais = models.CharField(max_length=100)
+#     telefono = models.CharField(max_length=20)
+#     #nacimiento = models.DateField
+
+#     def __str__(self):
+#         return self.first_name + " " + self.last_name if (self.username != 'admin') else 'admin'
     
 #class Constructora(models.Model):
  #   nombre = models.CharField(max_length=100)

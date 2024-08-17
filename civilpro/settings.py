@@ -150,3 +150,8 @@ JAZZMIN_SETTINGS = {
 JAZZMIN_UI_TWEAKS = {
     "theme": "darkly",
 }
+
+AUTHENTICATION_BACKENDS = [
+    'authentapp.backends.UsuarioConstructoraBackend',
+    'django.contrib.auth.backends.ModelBackend',  # Backend por defecto
+]
