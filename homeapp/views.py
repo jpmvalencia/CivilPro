@@ -157,7 +157,6 @@ def proyectos_info(request):
 
 
 
-
     return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link})
 
 

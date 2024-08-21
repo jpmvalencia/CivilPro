@@ -11,16 +11,16 @@ class Usuario(AbstractUser):
     def __str__(self):
         return self.first_name + " " + self.last_name if (self.username != 'admin') else 'admin'
     
-#class Constructora(models.Model):
- #   nombre = models.CharField(max_length=100)
-  #  correo = models.CharField(max_length=50, unique = True)
-   # contraseña = models.CharField(max_length=20)
-   # nit = models.CharField(max_length=100)
-   # codigo_pais = models.CharField(max_length=100)
-   # telefono = models.CharField(max_length=20)
+class Constructora(models.Model):
+    nombre = models.CharField(max_length=100)
+    correo = models.CharField(max_length=50, unique = True)
+    contraseña = models.CharField(max_length=20)
+    nit = models.CharField(max_length=100)
+    codigo_pais = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=20)
 
-   # def __str__(self):
-   #     return self.nombre + " " + self.nit if (self.correo != 'admin') else 'admin'
+    def __str__(self):
+        return self.nombre + " " + self.nit if (self.correo != 'admin') else 'admin'
     
 
 class Titulo(models.Model):
