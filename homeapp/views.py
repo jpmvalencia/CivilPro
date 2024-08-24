@@ -3,9 +3,9 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import connection
-from .models import Usuario
-from .models import Proyecto, ProyectoUsuario, Tarea
-from authentapp.models import Usuario
+from .models import Employee#Usuario
+from .models import Project, ProjectEmployee, Task#Proyecto, ProyectoUsuario, Tarea
+from authentapp.models import Employee#Usuario
 
 # Create your views here.
 def home(request):

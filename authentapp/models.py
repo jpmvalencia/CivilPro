@@ -34,35 +34,33 @@ class ConstructoraManager(BaseUserManager):
         return self.create_user(username, password, **extra_fields)
 
 class UsuarioBase(AbstractBaseUser):
-    username = models.CharField(max_length=255, unique=True)
-    password = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    password = models.CharField(max_length=255, null=False)
+    email = models.CharField(max_length=255, null=False)
+    phone = models.CharField(max_length=255, null=True, blank=True)
 
     USERNAME_FIELD = 'username'
 
     class Meta:
         abstract = True
 
-class Usuario(UsuarioBase):
-    documento_usu = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    nombre_usu = models.CharField(max_length=255, null=False, blank=False)
-    apellido_usu = models.CharField(max_length=255, null=False, blank=False)
-    telefono_usu = models.CharField(max_length=255, null=True, blank=True)
-    correo_usu = models.EmailField(max_length=255, null=False, blank=False)
-    codigo_pais = models.CharField(max_length=255)
+class Employee(UsuarioBase):
+    doc = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    firstname = models.CharField(max_length=255, null=False, blank=False)
+    lastname = models.CharField(max_length=255, null=False, blank=False)
+    country_code = models.CharField(max_length=255)
     objects = UsuarioManager()
 
     def __str__(self):
-        return self.nombre
+        return self.firstname + self.lastname
 
-class Constructora(UsuarioBase):
-    nit_con = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    nombre_con = models.CharField(max_length=255, null=False, blank=False)
-    correo_con = models.EmailField(max_length=255, null=False, blank=False)
-    telefono_con = models.CharField(max_length=255, null=True, blank=True)
+class Company(UsuarioBase):
+    nit = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    name = models.CharField(max_length=255, null=False, blank=False)
     objects = ConstructoraManager()
 
     def __str__(self):
-        return self.razon_social
+        return self.name
 
 # Create your models here.
 # class Usuario(AbstractUser):
@@ -86,15 +84,15 @@ class Constructora(UsuarioBase):
    #     return self.nombre + " " + self.nit if (self.correo != 'admin') else 'admin'
     
 
-class Titulo(models.Model):
-    nombre = models.CharField(max_length=100)
+class Degree(models.Model):
+    name = models.CharField(max_length=100)
     
     def __str__(self):
-        return self.nombre
+        return self.name
 
-class UsuarioTitulo(models.Model):
-    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    id_titulo = models.ForeignKey(Titulo, on_delete=models.CASCADE)
+class EmployeeDegree(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    degree = models.ForeignKey(Degree, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.id_usuario.username + " - " + self.id_titulo.nombre
+        return self.employee.username + " - " + self.degree.name

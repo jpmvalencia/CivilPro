@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.db import connection
 
 from homeapp.views import proyectos_info
-from .models import Constructora, Usuario, Titulo, UsuarioTitulo#, Constructora
+from .models import Company, Employee, Degree, EmployeeDegree#Constructora, Usuario, Titulo, UsuarioTitulo#, Constructora
 
     
 def login(request):
