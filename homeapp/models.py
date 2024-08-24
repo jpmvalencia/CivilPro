@@ -1,6 +1,6 @@
 from django.db import models
 
-from authentapp.models import Usuario
+from authentapp.models import Usuario, Constructora
 
 # Create your models here.
 class Proyecto(models.Model):
@@ -9,11 +9,12 @@ class Proyecto(models.Model):
     estado = models.CharField(max_length=50, default='Etapa Inicial')
     fecha_inicio = models.DateField()
     fecha_final = models.DateField()
-    constructora = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    
+    presupuesto = models.DecimalField(max_digits=10, decimal_places=2)
+    constructora = models.ForeignKey(Constructora, on_delete=models.CASCADE)  # Cambio aquí
 
     def __str__(self):
         return self.nombre
+
 
 class ProyectoUsuario(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)

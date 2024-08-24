@@ -52,7 +52,7 @@ class Usuario(UsuarioBase):
     objects = UsuarioManager()
 
     def __str__(self):
-        return self.nombre
+        return self.nombre_usu
 
 class Constructora(UsuarioBase):
     nit_con = models.CharField(max_length=255, unique=True, null=False, blank=False)
@@ -62,7 +62,7 @@ class Constructora(UsuarioBase):
     objects = ConstructoraManager()
 
     def __str__(self):
-        return self.razon_social
+        return self.nombre_con
 
 # Create your models here.
 # class Usuario(AbstractUser):
