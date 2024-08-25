@@ -83,11 +83,11 @@
 					</div>
 					<div class="form-row scroll-container">
 						<p class="text-midnight-express">Seleccione sus especializaciones:</p>
-						{% for titulo in titulos_disponibles %}
+						{% for degree in degrees %}
 							<div class="form-checkbox">
 								<label class="container">
-									<p>{{ titulo.nombre }}</p>
-									<input type="checkbox" name="titles[]" value="{{ titulo.nombre }}">
+									<p>{{ degree.name }}</p>
+									<input type="checkbox" name="titles[]" value="{{ degree.name }}">
 									<span class="checkmark"></span>
 								</label>
 							</div>

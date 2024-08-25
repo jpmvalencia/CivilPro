@@ -1,63 +1,55 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-class UsuarioManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        if not username:
-            raise ValueError('El usuario debe tener un nombre de usuario')
-        user = self.model(username=username, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+# class UsuarioManager(BaseUserManager):
+#     def create_user(self, username, password=None, **extra_fields):
+#         if not username:
+#             raise ValueError('El usuario debe tener un nombre de usuario')
+#         user = self.model(username=username, **extra_fields)
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
 
-    def create_superuser(self, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+#     def create_superuser(self, username, password=None, **extra_fields):
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(username, password, **extra_fields)
+#         return self.create_user(username, password, **extra_fields)
 
-class ConstructoraManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        if not username:
-            raise ValueError('La constructora debe tener un nombre de usuario')
-        user = self.model(username=username, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+# class ConstructoraManager(BaseUserManager):
+#     def create_user(self, username, password=None, **extra_fields):
+#         if not username:
+#             raise ValueError('La constructora debe tener un nombre de usuario')
+#         user = self.model(username=username, **extra_fields)
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
 
-    def create_superuser(self, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+#     def create_superuser(self, username, password=None, **extra_fields):
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(username, password, **extra_fields)
+#         return self.create_user(username, password, **extra_fields)
 
-class UsuarioBase(AbstractBaseUser):
-    username = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    password = models.CharField(max_length=255, null=False)
-    email = models.CharField(max_length=255, null=False)
-    phone = models.CharField(max_length=255, null=True, blank=True)
+class CustomUser(AbstractUser):
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    country_code = models.CharField(max_length=10)
+    is_employee = models.BooleanField(default=False)
+    is_company = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'username'
-
-    class Meta:
-        abstract = True
-
-class Employee(UsuarioBase):
-    doc = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    firstname = models.CharField(max_length=255, null=False, blank=False)
-    lastname = models.CharField(max_length=255, null=False, blank=False)
-    country_code = models.CharField(max_length=255)
-    objects = UsuarioManager()
+class Employee(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    doc = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.firstname + self.lastname
 
-class Company(UsuarioBase):
-    nit = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    name = models.CharField(max_length=255, null=False, blank=False)
-    objects = ConstructoraManager()
+class Company(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    nit = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.name
