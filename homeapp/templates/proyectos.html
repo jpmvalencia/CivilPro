@@ -102,7 +102,21 @@
         margin-left: 10px;
         margin-bottom: 10px;
     }
+    .custom-margin {
+    margin-left: 20px; /* Ajusta el valor según sea necesario */
+    }
 
+    .bg-success {
+    background-color: green !important;
+}
+
+.bg-warning {
+    background-color: yellow !important;
+}
+
+.bg-danger {
+    background-color: red !important;
+}
 
    </style>
 </head>
@@ -136,14 +150,15 @@
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
                     <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.nombre }}</h2>
-                    
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    
                     {% if show_link %}
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
+                    <button type="button" class="btn btn-danger custom-margin" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                     {% endif %}
+                    
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
+                    
 
                 </div>
                 
@@ -152,6 +167,7 @@
                         <img class="d-block mx-auto rounded-10"
                             src="https://th.bing.com/th/id/OIP.p3asnh-5bcoAzkwRnvXUgwHaEK?rs=1&pid=ImgDetMain" alt="construcción"
                             style="height: 100%; width: 450px; max-width: 100%;  object-fit: cover;">
+                           
                     </div>
 
                     <div class="container mt-3">
@@ -174,24 +190,18 @@
                                     </div>
                                 </div>
                                 
-                                <h1></h1>
+                                
                                 <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
                                     <div class="col-lg-5">
                                         <div class="margen">
                                             {% for tarea in tareas %}
                                             {% if tarea.id_pro_tar == proyecto.id %}
-                                            
+                                            <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
                                             <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
                                                 <label class="container2">{{tarea.nombre_tar}}
                                                     <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}">
-                                                    <span class="checkmark"></span>
                                                 </label>
-                                                <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
-                                                <span class="checkmark"></span>
-                                            </label> 
                                             </button>
-                                            <h1></h1>
-
                                             {% endif %}
                                             {% endfor %}
                                         </div>
@@ -208,8 +218,7 @@
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
                                         <h3 class="fw-bolder fs-4 lh-base">Información del proyecto</h3>
                                         <button type="button" class="btn">
-                                            <i
-                                                class="fa-solid fa-pen-to-square text-distant-horizon zoom-in zoom-out"></i>
+                                            <i class="fa-solid fa-pen-to-square text-distant-horizon zoom-in zoom-out"></i>
                                         </button>
                                     </div>
                                     <ul class="list-group">
@@ -217,21 +226,25 @@
                                                 class="fw-bold">Constructora: </span>{{ proyecto.nombre }}
                                         </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.fecha_inicio }}</li>
+                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.fecha_inicio|date:"d/m/Y" }}</li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Fecha de finalización: </span>{{ proyecto.fecha_final }}
+                                            class="fw-bold">Fecha de finalización: </span>{{ proyecto.fecha_final|date:"d/m/Y" }}
                                         </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon">
                                             <span class="d-inline-flex flex-items-center flex-nowrap no-underline text-small mr-3">
                                                 <span class="color-fg-default text-bold mr-1">Presupuesto: </span>
-                                                <span>{{ proyecto.presupuesto }},00 %</span>
+                                                <span>&nbsp;${{ proyecto.presupuesto }}</span>
                                             </span>
                                             <div class="progress">
-                                                <div class="progress-bar" role="progressbar" aria-label="Presupuesto" 
-                                                     style="width: {{ proyecto.presupuesto }}%;" 
-                                                     aria-valuenow="{{ proyecto.presupuesto }}" 
-                                                     aria-valuemin="0" 
-                                                     aria-valuemax="100"></div>
+                                                <div class="progress-bar 
+                                                    {% if proyecto.presupuesto >= 20000 %}bg-success{% elif proyecto.presupuesto >= 2000 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                                    role="progressbar" 
+                                                    aria-label="Presupuesto" 
+                                                    style="width: {{ proyecto.presupuesto }}%;" 
+                                                    aria-valuenow="{{ proyecto.presupuesto }}" 
+                                                    aria-valuemin="0" 
+                                                    aria-valuemax="100">
+                                                </div>
                                             </div>
                                         </li>
                                         
@@ -263,6 +276,7 @@
                                         {% endfor %}
                                     </ul>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -384,7 +398,7 @@
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
                     <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre_tar}}</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
                 </div>
                 
               <div class="modal-body">
@@ -403,12 +417,12 @@
                             <!-- Campo de entrada para el apellido -->
                             <div class="mb-3">
                                 <label for="start-date" class="form-label">Fecha de inicio:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio_tar }}">
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio_tar|date:'d/m/Y' }}">
                             </div>
                             <!-- Campo de entrada para el email -->
                             <div class="mb-3">
                                 <label for="end-date" class="form-label">Fecha de finalización:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final_tar }}">
+                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final_tar|date:'d/m/Y' }}">
                             </div>
                         </div>
                         <!-- Columna derecha -->
@@ -425,8 +439,10 @@
                             </div> {% endcomment %}
                         </div>
                     </div>
+                    
                 </form>
             </div>
+            
                     <!-- Puedes agregar más información aquí -->
                 </div>
             </div>

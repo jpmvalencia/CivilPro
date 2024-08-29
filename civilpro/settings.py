@@ -80,8 +80,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.oracle",
         "NAME": "xe",
-        "USER": "CIVIL_PRO",
-        "PASSWORD": "cppsswd",
+        "USER": "civilproadmin",
+        "PASSWORD": "31415926",
         "HOST": "localhost",
         "PORT": "1521",
     }
