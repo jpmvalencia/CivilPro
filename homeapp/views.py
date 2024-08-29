@@ -17,25 +17,24 @@ def nueva_tarea(request, id_proyecto):
     if request.method == 'GET':
         return render(request,'nueva-tarea.html')
     else:
-        try:
-            nombre = request.POST.get('title')
-            descripcion = request.POST.get('description')
-            fecha_inicio = request.POST.get('start-date')
-            fecha_final = request.POST.get('end-date')
-            presupuesto = request.POST.get('presupuesto')
-            print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto, id_proyecto)
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT MAX(ID_TAR) FROM TAREAS")
-                max_id = cursor.fetchone()[0]
-                id_tareas = 1 if max_id is None else max_id + 1
-                cursor.execute(
-                    "INSERT INTO Tareas (id_tar, nombre_tar, descripcion_tar, fecha_inicio_tar, fecha_final_tar, presupuesto_tar, id_pro_tar) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    [id_tareas, nombre, descripcion, fecha_inicio, fecha_final, presupuesto, id_proyecto]
-                )
+        
+        nombre = request.POST.get('title')
+        descripcion = request.POST.get('description')
+        fecha_inicio = request.POST.get('start-date')
+        fecha_final = request.POST.get('end-date')
+        presupuesto = request.POST.get('presupuesto')
+        print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto, id_proyecto)
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT MAX(ID_TAR) FROM TAREAS")
+            max_id = cursor.fetchone()[0]
+            id_tareas = 1 if max_id is None else max_id + 1
+            cursor.execute(
+                "INSERT INTO Tareas (id_tar, nombre_tar, descripcion_tar, fecha_inicio_tar, fecha_final_tar, presupuesto_tar, id_pro_tar) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                [id_tareas, nombre, descripcion, fecha_inicio, fecha_final, presupuesto, id_proyecto]
+            )
+        return redirect('proyectos')
+        
             
-            return redirect('proyectos')
-        except:
-            return render(request, 'nueva-tarea.html', {'error': 'Ingresa datos válidos.'})
         
         
 @login_required
@@ -43,7 +42,6 @@ def nuevo_proyecto(request):
     if request.method == 'GET':
         return render(request, 'nuevo-proyecto.html')
     else:
-        try:
             nombre = request.POST.get('title')
             descripcion = request.POST.get('description')
             fecha_inicio = request.POST.get('start-date')
@@ -54,14 +52,17 @@ def nuevo_proyecto(request):
             print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto, nit)
             
             with connection.cursor() as cursor:
+                cursor.execute("SELECT MAX(ID_TAR) FROM TAREAS")
+                max_id = cursor.fetchone()[0]
+                id_proyecto = 1 if max_id is None else max_id + 1
                 cursor.execute(
-                    "INSERT INTO Proyectos (id_pro, nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, NIT_con_pro) VALUES (proyecto_seq.NEXTVAL, %s, %s, %s, %s, %s, %s)",
-                    [nombre, descripcion, fecha_inicio, fecha_final, presupuesto, nit]
+                    "INSERT INTO Proyectos (id_pro, nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, NIT_con_pro) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    [id_proyecto,nombre, descripcion, fecha_inicio, fecha_final, presupuesto, nit]
                 )
             
-            return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
-        except Exception as e:
-            return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
+            return redirect('proyectos')  # Ajusta la URL de redirección según sea necesario
+    
+    return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
         
 
 @login_required
