@@ -44,22 +44,23 @@ def nuevo_proyecto(request):
         return render(request, 'nuevo-proyecto.html')
     else:
         try:
-            nombre = request.POST.get('title')
-            descripcion = request.POST.get('description')
-            fecha_inicio = request.POST.get('start-date')
-            fecha_final = request.POST.get('end-date')
-            presupuesto = request.POST.get('presupuesto')
-            nit = request.user.documento
-
-            print(nombre, descripcion, fecha_inicio, fecha_final, presupuesto, nit)
-            
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "INSERT INTO Proyectos (id_pro, nombre_pro, descripcion_pro, fecha_inicio_pro, fecha_final_pro, presupuesto_pro, NIT_con_pro) VALUES (proyecto_seq.NEXTVAL, %s, %s, %s, %s, %s, %s)",
-                    [nombre, descripcion, fecha_inicio, fecha_final, presupuesto, nit]
-                )
-            
-            return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
+            name = request.POST.get('title')
+            description = request.POST.get('description')
+            start_date = request.POST.get('start-date')
+            end_date = request.POST.get('end-date')
+            budget = request.POST.get('presupuesto')
+            company = request.user.company.id  
+            proyecto = Project(
+                name=name,
+                description=description,
+                start_date=start_date,
+                end_date=end_date,
+                budget=budget,
+                company=company
+            )
+            proyecto.save()
+            print("El guardado se ha realizado con éxito.")
+            return redirect('proyectos')  # Ajusta la URL de redirección según sea necesario
         except Exception as e:
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
         
@@ -176,15 +177,32 @@ def proyectos_info(request):
     #     })
 
 
-    proyectos = Project.objects.all()
-    proyecto_usuarios = ProjectEmployee.objects.all()
+    allproyectos = Project.objects.all()
+    # for allproyecto in allproyectos:
+    #     if request.user.id == allproyecto.nit_con_pro:
+    #         proyecto_usuarios = ProjectEmployee.objects.all()
     usuario_actual = request.user
     tareas = Task.objects.all()
     roles = Role.objects.all()
+    show_link = False
 
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuarios': proyecto_usuarios, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles})#,'show_link': show_link})
+    if (usuario_actual.is_employee):
+        try:
+            employee = usuario_actual.employee
+            proyectos = Project.objects.filter(projectemployee__employee=employee)
+        except Employee.DoesNotExist:
+            # Manejo del caso en el que no exista un Employee asociado al usuario
+            proyectos = []
+    else:
+        show_link = True
+        try:
+            company = usuario_actual.company
+            proyectos = Project.objects.filter(company=company)
+        except Employee.DoesNotExist:
+            # Manejo del caso en el que no exista un Employee asociado al usuario
+            proyectos = []
 
-
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link})
 
 @login_required
 def actualizar_perfil(request):
