@@ -78,21 +78,49 @@ def nuevo_proyecto(request):
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
 
         
-
 @login_required
 def eliminar_proyecto(request, id_proyecto):
     try:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "DELETE FROM Proyectos WHERE id_pro = %s", [id_proyecto]
-            )
-            cursor.execute(
-                "DELETE FROM Tareas WHERE id_pro_tar = %s;", [id_proyecto]
-            )
-        return redirect('proyectos_info')  # Ajusta la URL de redirección según sea necesario
-    except Exception as e:
+        proyecto = Project.objects.get(id=id_proyecto)
+        proyecto.delete()
+        return redirect('proyectos')
+    except Project.DoesNotExist:
         return redirect('proyectos')
 
+@login_required
+def nuevo_proyecto(request):
+    if request.method == "GET":
+        return render(request, "nuevo-proyecto.html")
+    else:
+        try:
+            # Obtener los datos del formulario
+            name = request.POST.get("title")
+            description = request.POST.get("description")
+            start_date = request.POST.get("start-date")
+            end_date = request.POST.get("end-date")
+            budget = request.POST.get("presupuesto")
+
+            # Obtener la instancia de la compañía del usuario
+            company = request.user.company
+            
+            # Crear una instancia del proyecto
+            proyecto = Project(
+                name=name,
+                description=description,
+                start_date=start_date,
+                end_date=end_date,
+                budget=budget,
+                company=company  # Pasar la instancia de la compañía, no el NIT
+            )
+
+            # Guardar el proyecto en la base de datos
+            proyecto.save()
+            print("El guardado se ha realizado con éxito.")
+            return redirect('proyectos')  # Redirige a la página de proyectos
+        except Exception as e:
+            # Mostrar mensaje de error en caso de fallo
+            print(f"Error al guardar el proyecto: {e}")
+            return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
 
 @login_required
 def proyectos_info(request):
