@@ -11,7 +11,6 @@ class Project(models.Model):
     end_date = models.DateField()
     budget = models.FloatField()
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    # constructora = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
