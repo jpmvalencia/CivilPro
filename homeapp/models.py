@@ -1,6 +1,6 @@
 from django.db import models
 
-from authentapp.models import Employee, Company
+from authentapp.models import CustomUser, Company
 
 # Create your models here.
 class Project(models.Model):
@@ -31,7 +31,7 @@ class Role(models.Model):
     
 class ProjectEmployee(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
     def __str__(self):
