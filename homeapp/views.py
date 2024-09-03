@@ -277,7 +277,7 @@ def buscar_usuario(request):
     query = request.GET.get('query')
     print(query)
     if query:
-        results = CustomUser.objects.filter(username__icontains=query)
+        results = CustomUser.objects.filter(username__icontains=query, is_employee=True)
         data = [{'firstname': result.first_name, 'lastname': result.last_name, 'email': result.username} for result in results]
         return JsonResponse(data, safe=False)
     
