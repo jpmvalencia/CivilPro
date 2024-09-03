@@ -2,10 +2,11 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from django.db import connection
 from .models import Employee, Role#Usuario
-from .models import Project, ProjectEmployee, Task#Proyecto, ProyectoUsuario, Tarea
-from authentapp.models import Employee#Usuario
+from .models import Project, ProjectEmployee, Task, ProjectEmployee #Proyecto, ProyectoUsuario, Tarea
+from authentapp.models import Employee, CustomUser
 
 # Create your views here.
 def home(request):
@@ -272,39 +273,12 @@ def actualizar_perfil(request):
         return redirect('/proyectos')  # Reemplaza 'nombre_de_la_vista' con el nombre de tu vista
 
 @login_required
-def actualizar_perfil(request):
-    if request.method == 'POST':
-        # Obtener el usuario actual
-        usuario_actual = request.user
-
-        # Obtener los datos del formulario
-        nuevo_nombre = request.POST.get('first_name')
-        nuevo_apellido = request.POST.get('last_name')
-        nuevo_username = request.POST.get('username')
-        nuevo_password = request.POST.get('password')
-
-        # Actualizar los campos del usuario con los nuevos datos
-        usuario_actual.first_name = nuevo_nombre
-        usuario_actual.last_name = nuevo_apellido
-        usuario_actual.username = nuevo_username
-        if nuevo_password:
-            usuario_actual.set_password(nuevo_password)
-
-        # Guardar los cambios en la base de datos
-        usuario_actual.save()
-
-        # Mostrar un mensaje de éxito
-        messages.success(request, 'Perfil actualizado correctamente.')
-
-        # Redirigir a alguna página de confirmación o a la misma página
-        return redirect('/proyectos')  # Reemplaza 'nombre_de_la_vista' con el nombre de tu vista
-
-@login_required
 def buscar_usuario(request):
     query = request.GET.get('query')
+    print(query)
     if query:
-        results = Employee.objects.filter(username__icontains=query)
-        data = [{'firstname': result.first_name, 'lastname': result.last_name, 'email': result.username, 'doc': result.documento} for result in results]
+        results = CustomUser.objects.filter(username__icontains=query)
+        data = [{'firstname': result.first_name, 'lastname': result.last_name, 'email': result.username} for result in results]
         return JsonResponse(data, safe=False)
     
     
@@ -314,41 +288,26 @@ def buscar_usuario(request):
 @login_required
 def agregar_usuario(request):
     if request.method == 'GET':
-        projectId = request.GET.get('projectId')
-        userEmail = request.GET.get('userEmail')
-        rolUser = request.GET.get('rolUser')
+        project_id = request.GET.get('projectId')
+        user_email = request.GET.get('userEmail')
+        rol_name = request.GET.get('rolUser')
+        print(project_id, user_email, rol_name)
+
+        # Obtener el proyecto
+        project = Project.objects.get(id=project_id)
+
+        # Obtener el usuario
+        employee = CustomUser.objects.get(email=user_email)
+
+        # Obtener el rol
+        role = rol_name
+
+        # Crear la relación entre el proyecto y el usuario con el rol especificado
+        ProjectEmployee.objects.create(employee=employee, project=project, role=role)
         
-        print("---------------------------------------------")
-        print(userEmail)
-        print("---------------------------------------------")
-        print(projectId)
-        print("---------------------------------------------")
-        print(rolUser)
-        print("---------------------------------------------")
+        # Redirigir a la página de proyectos
+        return redirect('/proyectos')
 
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM roles1 WHERE nombre_rol = %s", [rolUser])
-            rol_row = cursor.fetchone()
-            print(rol_row)
-            cursor.execute("SELECT id FROM authentapp_usuario WHERE email = %s", [userEmail])
-            user_row = cursor.fetchone()
-            print(user_row)
-            cursor.execute("SELECT id_pro FROM proyectos WHERE id_pro = %s", [projectId])
-            proyecto_row = cursor.fetchone()
-            print(proyecto_row)
-
-            
-        # Obtener los IDs correspondientes
-        rolUser_id = rol_row[0]
-        user_id = user_row[0]
-        proyecto_id = proyecto_row[0]
-        print("Llega hasta aquí")
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "INSERT INTO miembros_proyectos (documento_mie_pro, id_pro_mie, nombre_rol_mie_pro, nit_con_mie_pro) VALUES (%s, %s, %s, %s)",
-            [user_id, proyecto_id, rolUser_id, 'j']
-        )# Realizar la inserciónwith connection.cursor() as cursor:
-    
 
 
     return redirect('/proyectos')

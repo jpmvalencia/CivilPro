@@ -310,7 +310,7 @@
                             <select class="form-select text-center" style="max-width: 60%;" id="sel-user-rol-{{ proyecto.id }}">
                                 <option value="">Seleccionar Rol</option>
                                 {% for rol in roles %}
-                                    <option value="{{ rol }}">{{ rol }}</option>
+                                    <option value="{{ rol.id }}">{{ rol.name }}</option>
                                 {% endfor %}
                             </select>
                             
