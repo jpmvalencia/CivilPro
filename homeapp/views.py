@@ -290,20 +290,21 @@ def agregar_usuario(request):
     if request.method == 'GET':
         project_id = request.GET.get('projectId')
         user_email = request.GET.get('userEmail')
-        rol_name = request.GET.get('rolUser')
-        print(project_id, user_email, rol_name)
+        role_id = request.GET.get('rolUser')
+        print(project_id, user_email, role_id)
 
         # Obtener el proyecto
         project = Project.objects.get(id=project_id)
 
         # Obtener el usuario
-        employee = CustomUser.objects.get(email=user_email)
+        employee = Employee.objects.get(user__email=user_email)
+        user_id = CustomUser.objects.get(id=employee.user_id)
 
         # Obtener el rol
-        role = rol_name
+        role = Role.objects.get(id=role_id)
 
         # Crear la relación entre el proyecto y el usuario con el rol especificado
-        ProjectEmployee.objects.create(employee=employee, project=project, role=role)
+        ProjectEmployee.objects.create(employee=user_id, project=project, role=role)
         
         # Redirigir a la página de proyectos
         return redirect('/proyectos')
