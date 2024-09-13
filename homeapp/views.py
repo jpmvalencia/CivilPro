@@ -1,11 +1,10 @@
+from asyncio import Task
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.db import connection
-from .models import Employee, Role#Usuario
-from .models import Project, ProjectEmployee, Task, ProjectEmployee #Proyecto, ProyectoUsuario, Tarea
 from authentapp.models import Employee, CustomUser
 
 # Create your views here.
@@ -41,7 +40,7 @@ def nueva_tarea(request, id_proyecto):
         
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Project
+from .models import Project, ProjectEmployee, Role
 
 @login_required
 def nuevo_proyecto(request):
