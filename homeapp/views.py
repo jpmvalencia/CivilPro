@@ -1,4 +1,3 @@
-from asyncio import Task
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -40,7 +39,7 @@ def nueva_tarea(request, id_proyecto):
         
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Project, ProjectEmployee, Role
+from .models import Project, ProjectEmployee, Role, Task
 
 @login_required
 def nuevo_proyecto(request):
