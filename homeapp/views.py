@@ -1,13 +1,14 @@
-from asyncio import Task
-from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from authentapp.models import CustomUser, Employee
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.shortcuts import get_object_or_404
 from django.db import connection
-from authentapp.models import Employee, CustomUser
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from homeapp.models import Project, ProjectEmployee, Role, Task
 
 # Create your views here.
+
+
 def home(request):
     return render(request, 'home.html')
 
@@ -36,11 +37,7 @@ def nueva_tarea(request, id_proyecto):
             return redirect('proyectos')
         except:
             return render(request, 'nueva-tarea.html', {'error': 'Ingresa datos válidos.'})
-        
-        
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .models import Project, ProjectEmployee, Role
+
 
 @login_required
 def nuevo_proyecto(request):
@@ -77,7 +74,7 @@ def nuevo_proyecto(request):
             print(f"Error al guardar el proyecto: {e}")
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
 
-        
+
 @login_required
 def eliminar_proyecto(request, id_proyecto):
     try:
@@ -227,8 +224,7 @@ def proyectos_info(request):
 
     if (usuario_actual.is_employee):
         try:
-            employee = usuario_actual.employee
-            proyectos = Project.objects.filter(projectemployee__employee=employee)
+            proyectos = Project.objects.filter(projectemployee__employee=usuario_actual)
         except Employee.DoesNotExist:
             # Manejo del caso en el que no exista un Employee asociado al usuario
             proyectos = []
