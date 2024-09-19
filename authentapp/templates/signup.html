@@ -106,17 +106,17 @@
 					<h2></h2>
 					<div class="form-group">
 						<div class="form-row form-row-1">
-							<input type="text" name="code" class="code" id="code" placeholder="+" value="{{ data.code }}" required>
+							<input type="number" name="code" class="code" id="code" placeholder="+" value="{{ data.code }}" required>
 						</div>
 						<div class="form-row form-row-2">
-							<input type="text" name="phone" class="phone" id="phone" placeholder="Número de Teléfono" value="{{ data.phone }}" required>
+							<input type="number" name="phone" class="phone" id="phone" placeholder="Número de Teléfono" value="{{ data.phone }}" required>
 						</div>
 					</div>
 					<div class="form-row">
 						<input type="text" name="your_email" id="your_email" class="input-text" value="{{ data.your_email }}" required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" placeholder="Correo Electronico">
 					</div>
 					<div class="form-row">
-						<input type="text" name="doc_id" class="doc_id" id="doc_id" placeholder="Número de Documento" value="{{ data.doc_id }}" required>
+						<input type="number" name="doc_id" class="doc_id" id="doc_id" placeholder="Número de Documento" value="{{ data.doc_id }}" required>
 					</div>
 					
 					<div class="form-row-last">
@@ -168,6 +168,83 @@
 				event.preventDefault(); // Evitar el envío del formulario solo si no se han seleccionado títulos
 			}
 		});
+
+		document.getElementById('myform').addEventListener('submit', function(event) {
+		// Prevenir el envío del formulario en caso de errores
+		event.preventDefault();
+
+		// Obtener los valores de los campos
+		var firstName = document.getElementById('first_name').value.trim();
+		var lastName = document.getElementById('last_name').value.trim();
+		var email = document.getElementById('your_email').value.trim();
+		var code = document.getElementById('code').value.trim();
+		var docId = document.getElementById('doc_id').value.trim();
+		var password = document.getElementById('password').value.trim();
+		var repassword = document.getElementById('repassword').value.trim();
+		var phone = document.getElementById('phone').value.trim();
+		
+		// Variables de validación
+		var isValid = true;
+		var errorMessage = '';
+
+		// Validar campos vacíos
+		if (firstName === '' || lastName === '' || email === '' || code === '' || docId === '' || password === '' || repassword === '' || phone === '') {
+			isValid = false;
+			errorMessage += 'Ningún campo debe estar vacío.\n';
+		}
+
+		// Validar Nombre y Apellido (mínimo 2 caracteres, sin números ni caracteres especiales)
+		var namePattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1' ]{2,}$/;
+		if (!namePattern.test(firstName)) {
+			isValid = false;
+			errorMessage += 'El nombre debe tener al menos 2 caracteres y no debe contener números ni caracteres especiales.\n';
+		}
+		if (!namePattern.test(lastName)) {
+			isValid = false;
+			errorMessage += 'El apellido debe tener al menos 2 caracteres y no debe contener números ni caracteres especiales.\n';
+		}
+
+		// Validar correo
+		var emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,6}$/;
+		if (!emailPattern.test(email)) {
+			isValid = false;
+			errorMessage += 'Correo electrónico no válido.\n';
+		}
+
+		// Validar código de país (solo dígitos)
+		var codePattern = /^[0-9]+$/;
+		if (!codePattern.test(code)) {
+			isValid = false;
+			errorMessage += 'El código de país debe contener solo dígitos.\n';
+		}
+
+		// Validar número de documento (mínimo 5 dígitos)
+		if (docId.length < 5 || !codePattern.test(docId)) {
+			isValid = false;
+			errorMessage += 'El número de documento debe tener al menos 5 dígitos.\n';
+		}
+
+		// Validar contraseña (mínimo 5 caracteres, al menos una mayúscula, una minúscula)
+		var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
+		if (!passwordPattern.test(password)) {
+			isValid = false;
+			errorMessage += 'La contraseña debe tener al menos 5 caracteres, una letra mayúscula y una letra minúscula.\n';
+		}
+
+		// Validar que ambas contraseñas coincidan
+		if (password !== repassword) {
+			isValid = false;
+			errorMessage += 'Las contraseñas no coinciden.\n';
+		}
+
+		// Mostrar mensaje de error si alguna validación falla
+		if (!isValid) {
+			alert(errorMessage);
+		} else {
+			this.submit(); // Enviar el formulario si es válido
+		}
+	});
+
 	</script>
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 </html>

@@ -200,6 +200,78 @@
             this.querySelector('span').classList.toggle('fa-eye-slash');
             this.querySelector('span').classList.toggle('fa-eye');
         });
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            // Prevenir el envío del formulario en caso de errores
+            event.preventDefault();
+        
+            // Obtener los valores de los campos
+            var title = document.getElementById('title').value.trim();
+            var description = document.getElementById('description').value.trim();
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+            var presupuesto = document.getElementById('presupuesto').value.trim();
+        
+            // Variables de validación
+            var isValid = true;
+            var errorMessage = '';
+        
+            // Validar que ningún campo esté vacío
+            if (title === '' || description === '' || startDate === '' || endDate === '' || presupuesto === '') {
+                isValid = false;
+                errorMessage += 'Ningún campo debe estar vacío.\n';
+            }
+        
+            // Validar el título (al menos 5 caracteres, máximo 20)
+            if (title.length < 5 || title.length > 20) {
+                isValid = false;
+                errorMessage += 'El título debe tener entre 5 y 20 caracteres.\n';
+            }
+        
+            // Validar la descripción (al menos 5 caracteres, máximo 80)
+            if (description.length < 5 || description.length > 80) {
+                isValid = false;
+                errorMessage += 'La descripción debe tener entre 5 y 80 caracteres.\n';
+            }
+        
+            // Validar el presupuesto (número mayor a 0)
+            var presupuestoPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
+            if (!presupuestoPattern.test(presupuesto) || parseFloat(presupuesto) <= 0) {
+                isValid = false;
+                errorMessage += 'El presupuesto debe ser un número positivo mayor a 0, con hasta dos decimales.\n';
+            }
+        
+            // Validar formato de fechas (DD/MM/YYYY)
+            var datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato de fecha en HTML5 (YYYY-MM-DD)
+            if (!datePattern.test(startDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de inicio debe tener el formato DD/MM/YYYY.\n';
+            }
+            if (!datePattern.test(endDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
+            }
+        
+            // Validar que la fecha de inicio no sea anterior a la fecha actual
+            var today = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
+            if (startDate < today) {
+                isValid = false;
+                errorMessage += 'La fecha de inicio no puede ser anterior a la fecha actual.\n';
+            }
+        
+            // Validar que la fecha de finalización sea posterior a la fecha de inicio
+            if (endDate <= startDate) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe ser posterior a la fecha de inicio.\n';
+            }
+        
+            // Mostrar mensaje de error si alguna validación falla
+            if (!isValid) {
+                alert(errorMessage);
+            } else {
+                this.submit(); // Enviar el formulario si es válido
+            }
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
