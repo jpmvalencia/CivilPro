@@ -1,6 +1,78 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<head>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            // Variables de validación
+            var isValid = true;
+            var errorMessage = '';
+        
+            // Obtener los valores de los campos
+            var title = document.getElementById('title').value.trim();
+            var presupuesto = document.getElementById('presupuesto').value.trim();
+            var description = document.getElementById('description').value.trim();
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+        
+            // Validar que ningún campo esté vacío
+            if (title === '' || presupuesto === '' || description === '' || startDate === '' || endDate === '') {
+                isValid = false;
+                errorMessage += 'Ningún campo debe estar vacío.\n';
+            }
+        
+            // Validar el título (entre 5 y 20 caracteres)
+            if (title.length < 5 || title.length > 20) {
+                isValid = false;
+                errorMessage += 'El título debe tener entre 5 y 20 caracteres.\n';
+            }
+        
+            // Validar la descripción (entre 5 y 80 caracteres)
+            if (description.length < 5 || description.length > 80) {
+                isValid = false;
+                errorMessage += 'La descripción debe tener entre 5 y 80 caracteres.\n';
+            }
+        
+            // Validar el presupuesto (número positivo, con o sin decimales)
+            var presupuestoPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
+            if (!presupuestoPattern.test(presupuesto) || parseFloat(presupuesto) <= 0) {
+                isValid = false;
+                errorMessage += 'El presupuesto debe ser un número positivo mayor a 0, con hasta dos decimales.\n';
+            }
+        
+            // Validar formato de fechas (DD/MM/YYYY)
+            var datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato de fecha en HTML5 (YYYY-MM-DD)
+            if (!datePattern.test(startDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de inicio debe tener el formato DD/MM/YYYY.\n';
+            }
+            if (!datePattern.test(endDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
+            }
+        
+            // Validar que la fecha de inicio no sea anterior a la fecha actual
+            var today = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
+            if (startDate < today) {
+                isValid = false;
+                errorMessage += 'La fecha de inicio no puede ser anterior a la fecha actual.\n';
+            }
+        
+            // Validar que la fecha de finalización sea posterior a la fecha de inicio
+            if (endDate <= startDate) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe ser posterior a la fecha de inicio.\n';
+            }
+        
+            // Si alguna validación falla, mostrar mensaje de error y prevenir el envío
+            if (!isValid) {
+                event.preventDefault();  // Solo prevenir si hay un error
+                alert(errorMessage);
+            }
+        });
+        
+        </script>
+</head>
 
 <div class="container bg-annapolis-blue rounded-10 p-5" style="max-width: 800px;">
     <form method="post">
@@ -34,77 +106,5 @@
     </form>
 </div>
 
-<script>
-document.querySelector('form').addEventListener('submit', function(event) {
-    // Variables de validación
-    var isValid = true;
-    var errorMessage = '';
-
-    // Obtener los valores de los campos
-    var title = document.getElementById('title').value.trim();
-    var presupuesto = document.getElementById('presupuesto').value.trim();
-    var description = document.getElementById('description').value.trim();
-    var startDate = document.getElementById('start-date').value;
-    var endDate = document.getElementById('end-date').value;
-
-    // Validar que ningún campo esté vacío
-    if (title === '' || presupuesto === '' || description === '' || startDate === '' || endDate === '') {
-        isValid = false;
-        errorMessage += 'Ningún campo debe estar vacío.\n';
-    }
-
-    // Validar el título (entre 5 y 20 caracteres)
-    if (title.length < 5 || title.length > 20) {
-        isValid = false;
-        errorMessage += 'El título debe tener entre 5 y 20 caracteres.\n';
-    }
-
-    // Validar la descripción (entre 5 y 80 caracteres)
-    if (description.length < 5 || description.length > 80) {
-        isValid = false;
-        errorMessage += 'La descripción debe tener entre 5 y 80 caracteres.\n';
-    }
-
-    // Validar el presupuesto (número positivo, con o sin decimales)
-    var presupuestoPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
-    if (!presupuestoPattern.test(presupuesto) || parseFloat(presupuesto) <= 0) {
-        isValid = false;
-        errorMessage += 'El presupuesto debe ser un número positivo mayor a 0, con hasta dos decimales.\n';
-    }
-
-    // Validar formato de fechas (DD/MM/YYYY)
-    var datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato de fecha en HTML5 (YYYY-MM-DD)
-    if (!datePattern.test(startDate)) {
-        isValid = false;
-        errorMessage += 'La fecha de inicio debe tener el formato DD/MM/YYYY.\n';
-    }
-    if (!datePattern.test(endDate)) {
-        isValid = false;
-        errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
-    }
-
-    // Validar que la fecha de inicio no sea anterior a la fecha actual
-    var today = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-    if (startDate < today) {
-        isValid = false;
-        errorMessage += 'La fecha de inicio no puede ser anterior a la fecha actual.\n';
-    }
-
-    // Validar que la fecha de finalización sea posterior a la fecha de inicio
-    if (endDate <= startDate) {
-        isValid = false;
-        errorMessage += 'La fecha de finalización debe ser posterior a la fecha de inicio.\n';
-    }
-
-    // Si alguna validación falla, mostrar mensaje de error y prevenir el envío
-    if (!isValid) {
-        event.preventDefault();  // Solo prevenir si hay un error
-        alert(errorMessage);
-    }
-});
-
-
-
-</script>
 
 {% endblock %}
