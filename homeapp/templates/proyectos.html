@@ -121,8 +121,8 @@
                         alt="yugiweed" style="height: 180px; object-fit: cover;">
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title text-uppercase">{{ proyecto.nombre }}</h5>
-                    <p class="card-text">{{ proyecto.descripcion }}</p>
+                    <h5 class="card-title text-uppercase">{{ proyecto.name }}</h5>
+                    <p class="card-text">{{ proyecto.description }}</p>
                 </div>
             </div>
         </a>
@@ -135,7 +135,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl modal-fullscreen-lg-down">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
-                    <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.nombre }}</h2>
+                    <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.name }}</h2>
                     
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     
@@ -179,15 +179,13 @@
                                     <div class="col-lg-5">
                                         <div class="margen">
                                             {% for tarea in tareas %}
-                                            {% if tarea.id_pro_tar == proyecto.id %}
+                                            {% if tarea.id == proyecto.id %}
                                             
                                             <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
-                                                <label class="container2">{{tarea.nombre_tar}}
+                                                <label class="container2">{{tarea.name}}
                                                     <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}">
                                                     <span class="checkmark"></span>
                                                 </label>
-                                                <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
-                                                <span class="checkmark"></span>
                                             </label> 
                                             </button>
                                             <h1></h1>
@@ -214,17 +212,17 @@
                                     </div>
                                     <ul class="list-group">
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Constructora: </span>{{ proyecto.nombre }}
+                                                class="fw-bold">Constructora: </span>{{ proyecto.name }}
                                         </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.fecha_inicio }}</li>
+                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.start_date }}</li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Fecha de finalización: </span>{{ proyecto.fecha_final }}
+                                                class="fw-bold">Fecha de finalización: </span>{{ proyecto.end_date }}
                                         </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon">
                                             <span class="d-inline-flex flex-items-center flex-nowrap no-underline text-small mr-3">
                                                 <span class="color-fg-default text-bold mr-1">Presupuesto: </span>
-                                                <span>{{ proyecto.presupuesto }},00 %</span>
+                                                <span>{{ proyecto.budget }},00 %</span>
                                             </span>
                                             <div class="progress">
                                                 <div class="progress-bar" role="progressbar" aria-label="Presupuesto" 
@@ -310,7 +308,7 @@
                             <select class="form-select text-center" style="max-width: 60%;" id="sel-user-rol-{{ proyecto.id }}">
                                 <option value="">Seleccionar Rol</option>
                                 {% for rol in roles %}
-                                    <option value="{{ rol }}">{{ rol }}</option>
+                                    <option value="{{ rol.id }}">{{ rol.name }}</option>
                                 {% endfor %}
                             </select>
                             
@@ -490,10 +488,7 @@
             // Maybe close modal or show a message
         })
         .catch(error => console.error('Error:', error));
-
-
     }
-
     
     document.querySelectorAll('[data-bs-target="#confirmDeleteModal"]').forEach(button => {
         button.addEventListener('click', function () {

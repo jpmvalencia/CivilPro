@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'homeapp'
      ]
 
+AUTH_USER_MODEL = 'authentapp.CustomUser'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -147,8 +149,3 @@ JAZZMIN_SETTINGS = {
 JAZZMIN_UI_TWEAKS = {
     "theme": "darkly",
 }
-
-AUTHENTICATION_BACKENDS = [
-    'authentapp.backends.UsuarioConstructoraBackend',
-    'django.contrib.auth.backends.ModelBackend',  # Backend por defecto
-]

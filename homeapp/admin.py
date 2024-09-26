@@ -1,7 +1,7 @@
-# from django.contrib import admin
-# from .models import Proyecto, ProyectoUsuario, Tarea
+from django.contrib import admin
+from homeapp.models import Project, ProjectEmployee, Role, Task
 
-# # Register your models here.
-# admin.site.register(Proyecto)
-# admin.site.register(ProyectoUsuario)
-# admin.site.register(Tarea)
+admin.site.register(Project)
+admin.site.register(Role)
+admin.site.register(Task)
+admin.site.register(ProjectEmployee)
