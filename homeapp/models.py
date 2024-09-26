@@ -1,6 +1,6 @@
 from django.db import models
 
-from authentapp.models import CustomUser, Company
+from authentapp.models import CustomUser, Company, Employee
 
 # Create your models here.
 class Project(models.Model):
@@ -22,9 +22,13 @@ class Task(models.Model):
     end_date = models.DateField()
     budget = models.FloatField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    inCharge = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=50, default='Etapa Inicial')
 
     def __str__(self):
         return self.name
+    
+    
     
 class Role(models.Model):
     name = models.CharField(max_length=100)
