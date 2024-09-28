@@ -97,6 +97,7 @@ def proyectos_info(request):
     tareas = Task.objects.all()
     roles = Role.objects.all()
     show_link = False
+    usuarios = ProjectEmployee.objects.all()
 
     if (usuario_actual.is_employee):
         try:
@@ -112,8 +113,8 @@ def proyectos_info(request):
         except Employee.DoesNotExist:
             # Manejo del caso en el que no exista un Employee asociado al usuario
             proyectos = []
-
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link})
+    print(tareas)
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link, 'usuarios': usuarios})
 
 @login_required
 def actualizar_perfil(request):

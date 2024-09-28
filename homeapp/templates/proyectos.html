@@ -172,21 +172,21 @@
                                         </a>
 
                                     </div>
-                                </div>
+                                </div>.
+                                
                                 
                                 <h1></h1>
                                 <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
                                     <div class="col-lg-5">
                                         <div class="margen">
                                             {% for tarea in tareas %}
-                                            {% if tarea.id == proyecto.id %}
-                                            
+                                            {% if tarea.project.id == proyecto.id %}
                                             <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
                                                 <label class="container2">{{tarea.name}}
-                                                    <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}">
+                                                    <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}" disabled>
                                                     <span class="checkmark"></span>
                                                 </label>
-                                            </label> 
+                                            
                                             </button>
                                             <h1></h1>
 
@@ -212,7 +212,7 @@
                                     </div>
                                     <ul class="list-group">
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Constructora: </span>{{ proyecto.name }}
+                                                class="fw-bold">Constructora: </span>{{ proyecto.company.first_name }}
                                         </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
                                                 class="fw-bold">Fecha de inicio: </span>{{ proyecto.start_date }}</li>
@@ -236,7 +236,7 @@
                                         
                                         
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Estado: </span>{{ proyecto.estado }}</li>
+                                                class="fw-bold">Estado: </span>{{ proyecto.status }}</li>
                                     </ul>
                                 </div>
                                 <hr>
@@ -251,11 +251,17 @@
                                     <ul>
 
                                         {% for usuario in usuarios %}
-                                        {% if usuario.id_pro_mie == proyecto.id %}
+                                        {% if usuario.project.id == proyecto.id %}
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-
-                                            <div class="fw-bold">{{ usuario.nombre }}</div>
-                                            <div>{{ usuario.nombre_rol_mie_pro }}
+                                            <div style="display: flex; align-items: center;">
+                                                <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="width: 40px;">
+                                                <div style="display: flex; flex-direction: column;">
+                                                    <span class="fw-bold">{{ usuario.employee.first_name }} {{ usuario.employee.last_name }}</span>
+                                                    <span style="font-size: 0.9em; color: gray;">{{ usuario.role.name }}</span>
+                                                </div>
+                                            </div>
+                                            
+                                            
                                         </li>
                                         {% endif %}
                                         {% endfor %}
@@ -488,10 +494,7 @@
             // Maybe close modal or show a message
         })
         .catch(error => console.error('Error:', error));
-
-
     }
-
     
     document.querySelectorAll('[data-bs-target="#confirmDeleteModal"]').forEach(button => {
         button.addEventListener('click', function () {
