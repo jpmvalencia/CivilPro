@@ -66,7 +66,8 @@ CREATE TABLE Tareas (
     fecha_final_tar DATE NOT NULL,
     presupuesto_tar NUMBER,
     responsable_tar VARCHAR2(20),
-    id_pro_tar NUMBER
+    id_pro_tar NUMBER,
+    estado_tar VARCHAR2(20)
 );
 
 CREATE TABLE Documentos_Tareas (
