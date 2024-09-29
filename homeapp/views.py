@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import connection
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
-from homeapp.models import Project, ProjectEmployee, Role, Task
+from django.shortcuts import get_object_or_404, redirect, render
+from homeapp.models import Project, ProjectEmployee, Role, StatusTask, Task
 
 # Create your views here.
 
@@ -21,12 +21,22 @@ def eliminar_proyecto(request, id_proyecto):
     except Project.DoesNotExist:
         return redirect('proyectos')
 
+@login_required
+def eliminar_tarea(request, id_tarea):
+    try:
+        tarea = Task.objects.get(id=id_tarea)
+        tarea.delete()
+        return redirect('proyectos')
+    except Project.DoesNotExist:
+        return redirect('proyectos')
 
 @login_required
 def nueva_tarea(request, id_proyecto):
     proyecto = Project.objects.get(id=id_proyecto)
+    
     if request.method == 'GET':
-        return render(request, 'nueva-tarea.html')
+        status_list = StatusTask.objects.all()  # Obtener los estados disponibles
+        return render(request, 'nueva-tarea.html', {'status_list': status_list})
     
     else:
         try:
@@ -36,6 +46,11 @@ def nueva_tarea(request, id_proyecto):
             start_date = request.POST.get("start-date")
             end_date = request.POST.get("end-date")
             budget = request.POST.get("presupuesto")
+            status_id = request.POST.get("status")
+            
+            # Obtener el objeto StatusTask seleccionado
+            status = get_object_or_404(StatusTask, id=status_id)
+            
             # Crear una nueva instancia de Task
             tarea = Task(
                 name=name,
@@ -43,17 +58,47 @@ def nueva_tarea(request, id_proyecto):
                 start_date=start_date,
                 end_date=end_date,
                 budget=budget,
-                project = proyecto
+                project=proyecto,
+                status=status  # Asignar el estado a la tarea
             )
-             # Guardar el proyecto en la base de datos
+            
+            # Guardar la tarea en la base de datos
             tarea.save()
-            print("El guardado se ha realizado con éxito.")
             return redirect('proyectos')  # Redirige a la página de proyectos
+        
         except Exception as e:
             # Mostrar mensaje de error en caso de fallo
-            print(f"Error al guardar el proyecto: {e}")
-            return render(request, 'nueva.tarea.html', {'error': 'Ingresa datos válidos.'})
+            status_list = StatusTask.objects.all()
+            return render(request, 'nueva-tarea.html', {'error': 'Ingresa datos válidos.', 'status_list': status_list}) 
+
+@login_required
+def editar_tarea(request, id_tarea):
+    tarea = get_object_or_404(Task, id=id_tarea)
+    
+    if request.method == 'POST':
+         # Obtener el valor del presupuesto
+        presupuesto = request.POST.get('presupuesto', '').replace(',', '.')
+
+        # Actualizar el valor del presupuesto en el objeto tarea
+        # Obtener datos del formulario
+        tarea.name = request.POST.get('title')
+        tarea.description = request.POST.get('description')
+        tarea.start_date = request.POST.get('start-date')
+        tarea.end_date = request.POST.get('end-date')
+        tarea.budget = float(presupuesto)
         
+        # Actualizar el estado de la tarea
+        status_id = request.POST.get('status')
+        status = StatusTask.objects.get(id=status_id)
+        tarea.status = status
+        
+        # Guardar los cambios en la base de datos
+        tarea.save()
+        
+        # Redirigir a la vista de proyectos o donde desees
+        return redirect('proyectos')
+    
+    return redirect('proyectos')   
 
 @login_required
 def nuevo_proyecto(request):
@@ -83,11 +128,9 @@ def nuevo_proyecto(request):
 
             # Guardar el proyecto en la base de datos
             proyecto.save()
-            print("El guardado se ha realizado con éxito.")
             return redirect('proyectos')  # Redirige a la página de proyectos
         except Exception as e:
             # Mostrar mensaje de error en caso de fallo
-            print(f"Error al guardar el proyecto: {e}")
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
 
 @login_required
@@ -98,6 +141,8 @@ def proyectos_info(request):
     roles = Role.objects.all()
     show_link = False
     usuarios = ProjectEmployee.objects.all()
+    status_list = StatusTask.objects.all()
+
 
     if (usuario_actual.is_employee):
         try:
@@ -113,8 +158,7 @@ def proyectos_info(request):
         except Employee.DoesNotExist:
             # Manejo del caso en el que no exista un Employee asociado al usuario
             proyectos = []
-    print(tareas)
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link, 'usuarios': usuarios})
+    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link, 'usuarios': usuarios, 'status_list': status_list})
 
 @login_required
 def actualizar_perfil(request):
@@ -147,7 +191,6 @@ def actualizar_perfil(request):
 @login_required
 def buscar_usuario(request):
     query = request.GET.get('query')
-    print(query)
     if query:
         results = CustomUser.objects.filter(username__icontains=query, is_employee=True)
         data = [{'firstname': result.first_name, 'lastname': result.last_name, 'email': result.username} for result in results]
@@ -163,8 +206,6 @@ def agregar_usuario(request):
         project_id = request.GET.get('projectId')
         user_email = request.GET.get('userEmail')
         role_id = request.GET.get('rolUser')
-        print(project_id, user_email, role_id)
-
         # Obtener el proyecto
         project = Project.objects.get(id=project_id)
 
@@ -179,8 +220,6 @@ def agregar_usuario(request):
         ProjectEmployee.objects.create(employee=user_id, project=project, role=role)
         
         # Redirigir a la página de proyectos
-        return redirect('/proyectos')
+        return redirect('proyectos')
 
-
-
-    return redirect('/proyectos')
+    return redirect('proyectos')

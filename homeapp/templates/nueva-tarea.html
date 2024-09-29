@@ -1,34 +1,55 @@
 {% extends 'base.html' %}
-
+ 
 {% block content %}
 
-<div class="container bg-annapolis-blue rounded-10 p-5" style="max-width: 800px;">
-    <form method="post" id="formTask">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="title">Título de la tarea</label>
-            <input type="text" name="title" id="title" class="form-control text-distant-horizon" autocomplete="off" required>
+<!-- Modal de edición de la tarea -->
+<div class="modal fade" id="editarModal_{{ tarea.id }}" tabindex="-1" aria-labelledby="editarModalLabel_{{ tarea.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-annapolis-blue rounded-10">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarModalLabel_{{ tarea.id }}">Editar Tarea: {{ tarea.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'editar_tarea' tarea.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título de la tarea</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ tarea.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" name="description" required>{{ tarea.description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="start-date" class="form-label">Fecha de inicio</label>
+                        <input type="date" class="form-control" id="start-date" name="start-date" value="{{ tarea.start_date }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end-date" class="form-label">Fecha de finalización</label>
+                        <input type="date" class="form-control" id="end-date" name="end-date" value="{{ tarea.end_date }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="presupuesto" class="form-label">Presupuesto</label>
+                        <input type="number" class="form-control" id="presupuesto" name="presupuesto" value="{{ tarea.budget }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Estado</label>
+                        <select class="form-control" id="status" name="status">
+                            {% for status in status_list %}
+                                <option value="{{ status.id }}" {% if tarea.status.id == status.id %}selected{% endif %}>{{ status.status }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn bg-distant-horizon text-midnight-express">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="description">Descripción</label>
-            <textarea name="description" id="description" class="form-control text-distant-horizon" placeholder="Agrega una descripción de la tarea." autocomplete="off" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="start-date">Fecha de inicio</label>
-            <input type="date" name="start-date" id="start-date" class="form-control text-distant-horizon" required>
-        </div>
-        <div class="form-group">
-            <label for="end-date">Fecha de finalización</label>
-            <input type="date" name="end-date" id="end-date" class="form-control text-distant-horizon" required>
-        </div>
-        <div class="form-group">
-            <label for="presupuesto">Presupuesto</label>
-            <input type="number" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" placeholder="Agrega un presupuesto para la tarea." required>
-        </div>
-        <div class="text-center">
-            <button type="submit" class="btn bg-distant-horizon text-midnight-express">Crear tarea</button>
-        </div>
-    </form>
+    </div>
+</div>
+
     <script>
         document.querySelector('#formTask').addEventListener('submit', function(event) {
             // Variables de validación
@@ -77,14 +98,7 @@
                 isValid = false;
                 errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
             }
-        
-            // Validar que la fecha de inicio no sea anterior a la fecha actual
-            var today = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-            if (startDate < today) {
-                isValid = false;
-                errorMessage += 'La fecha de inicio no puede ser anterior a la fecha actual.\n';
-            }
-        
+       
             // Validar que la fecha de finalización sea posterior a la fecha de inicio
             if (endDate <= startDate) {
                 isValid = false;
@@ -99,7 +113,7 @@
         });
         
         </script>
-</div>
+
 
 
 {% endblock %}

@@ -14,6 +14,9 @@ class Project(models.Model):
     
     def __str__(self):
         return self.name
+    
+class StatusTask(models.Model):
+    status = models.CharField(max_length=50, default='Pendiente')
 
 class Task(models.Model):
     name = models.CharField(max_length=100)
@@ -23,13 +26,11 @@ class Task(models.Model):
     budget = models.FloatField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     inCharge = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True)
-    status = models.CharField(max_length=50, default='Etapa Inicial')
+    status = models.ForeignKey(StatusTask, on_delete=models.CASCADE)  
 
     def __str__(self):
         return self.name
-    
-    
-    
+       
 class Role(models.Model):
     name = models.CharField(max_length=100)
     

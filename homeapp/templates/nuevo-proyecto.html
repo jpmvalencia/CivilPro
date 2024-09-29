@@ -11,11 +11,6 @@
                 required>
         </div>
         <div class="form-group">
-            <label for="presupuesto">Presupuesto</label>
-            <input type="number" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" autocomplete="off"
-                required>
-        </div>
-        <div class="form-group">
             <label for="description">Descripción</label>
             <textarea name="description" id="description" class="form-control text-distant-horizon"
                 placeholder="Agrega una descripción al proyecto." autocomplete="off" required></textarea>
@@ -27,6 +22,11 @@
         <div class="form-group">
             <label for="end-date">Fecha de finalización</label>
             <input type="date" name="end-date" id="end-date" class="form-control text-distant-horizon" required>
+        </div>
+        <div class="form-group">
+            <label for="presupuesto">Presupuesto</label>
+            <input type="number" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" autocomplete="off"
+                required>
         </div>
         <div class="text-center">
             <button type="submit" class="btn bg-distant-horizon text-midnight-express">Crear proyecto</button>
@@ -81,13 +81,6 @@ document.querySelector('#formProject').addEventListener('submit', function(event
     if (!datePattern.test(endDate)) {
         isValid = false;
         errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
-    }
-
-    // Validar que la fecha de inicio no sea anterior a la fecha actual
-    var today = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-    if (startDate < today) {
-        isValid = false;
-        errorMessage += 'La fecha de inicio no puede ser anterior a la fecha actual.\n';
     }
 
     // Validar que la fecha de finalización sea posterior a la fecha de inicio

@@ -140,8 +140,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     
                     {% if show_link %}
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
-                        <i class="fa-solid fa-trash-can"></i>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
+                        <i class="fa-solid fa-trash-can" style="color: #1f2123;"></i>
                     </button>
                     {% endif %}
 
@@ -166,27 +166,23 @@
                                             data-bs-target="#buscar-tarea" data-bs-dismiss="modal" data-bs-toggle="modal">
                                             <i class="fa fa-search"></i>
                                         </button>
-
                                         <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="{% url 'nueva-tarea' proyecto.id %}">
                                             <i class="fa-solid fa-plus"></i>
                                         </a>
 
                                     </div>
-                                </div>.
-                                
-                                
+                                </div>
                                 <h1></h1>
                                 <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
                                     <div class="col-lg-5">
                                         <div class="margen">
                                             {% for tarea in tareas %}
                                             {% if tarea.project.id == proyecto.id %}
-                                            <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
-                                                <label class="container2">{{tarea.name}}
-                                                    <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}" disabled>
+                                            <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal_{{ tarea.id }}">
+                                                <label class="container2">{{ tarea.name }}
+                                                    <input type="checkbox" value="{{ tarea.id }}" id="tarea-{{ tarea.id }}" name="id_pro_tar" disabled>
                                                     <span class="checkmark"></span>
                                                 </label>
-                                            
                                             </button>
                                             <h1></h1>
 
@@ -211,9 +207,6 @@
                                         </button>
                                     </div>
                                     <ul class="list-group">
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Constructora: </span>{{ proyecto.company.first_name }}
-                                        </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
                                                 class="fw-bold">Fecha de inicio: </span>{{ proyecto.start_date }}</li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
@@ -276,7 +269,6 @@
     </div>
     {% endfor %}
 
-
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -293,7 +285,22 @@
         </div>
     </div>
   
-    
+    <div class="modal fade" id="confirmDeleteTarea" tabindex="-1" aria-labelledby="confirmDeleteTareaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteTareaLabel">¿Está seguro que desea eliminar esta tarea?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Toda la información será eliminada permanentemente.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmDeleteTarBtn">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+
     {% for proyecto in proyectos %}
     <div class="modal fade" id="agregar-usuario-modal-{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="max-height: 250px;">
@@ -382,37 +389,36 @@
             </div>
         </div>
     </div>
+    
     {% for tarea in tareas %}
-    <div class="modal fade" id="tareaModal" tabindex="-1" aria-labelledby="tareaModalLabel" aria-hidden="true">
+    <div class="modal fade" id="tareaModal_{{ tarea.id }}" tabindex="-1" aria-labelledby="tareaModalLabel_{{ tarea.id }}" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tamaño pequeño -->
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
-                    <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre_tar}}</h2>
+                    <h2 class="modal-title text-capitalize" id="tareaModalLabel_{{ tarea.id }}">{{ tarea.name }}</h2>  
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#confirmDeleteTarea" data-tarea-id="{{ tarea.id }}">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>           
                 </div>
-                
-              <div class="modal-body">
-                <form method="post" action="">
+              <div class="modal-body"> 
+                <form method="post" id="formTaskEdit" action="{% url 'editar_tarea' tarea.id %}">
                     {% csrf_token %}
                     <div class="row">
+                        <input  type="hidden"  id="title" name="title" value="{{ tarea.name }}"> 
                         <!-- Columna izquierda -->
                         <div class="col-md-6">
-                            <!-- Campo de entrada para el nombre -->
-
                             <div class="mb-3">
                                 <label for="description" class="form-label">Descripción</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.descripcion_tar }}">
+                                <input type="text"  class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.description }}">
                             </div>
-
-                            <!-- Campo de entrada para el apellido -->
                             <div class="mb-3">
                                 <label for="start-date" class="form-label">Fecha de inicio:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio_tar }}">
+                                <input type="date" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.start_date|date:"Y-m-d" }}">
                             </div>
-                            <!-- Campo de entrada para el email -->
                             <div class="mb-3">
                                 <label for="end-date" class="form-label">Fecha de finalización:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final_tar }}">
+                                <input type="date" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.end_date|date:"Y-m-d" }}">
                             </div>
                         </div>
                         <!-- Columna derecha -->
@@ -420,14 +426,24 @@
                             <!-- Campo de entrada para la contraseña -->
                             <div class="mb-3">
                                 <label for="presupuesto" class="form-label">Presupuesto</label>
-                                <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.presupuesto_tar }}">
+                                <input type="float" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.budget }}">
                             </div>
-
+                            <div class="mb-3"></div>
+                                <label for="status" class="form-label">Estado</label>
+                                <select name="status" id="status" class="form-control text-distant-horizon custom-select-style" style="background-color: rgb(var(--bs-body-bg-rgb)); color: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;" required>
+                                    {% for status in status_list %}
+                                    <option  style="background-color:rgb(var(--bs-body-bg-rgb)); color: #000;" value="{{ status.id }}" {% if tarea.status.id == status.id %}selected{% endif %}>
+                                        {{ status.status }}
+                                    </option>{% endfor %}
+                                </select>
+                            </div>
                             {% comment %} <div class="mb-3">
                                 <label for="responsable" class="form-label">Responsable</label>
                                 <input type="text" readonly="readonly" step="0.01" name="responsable" id="responsable" class="form-control text-distant-horizon" value="">
                             </div> {% endcomment %}
                         </div>
+                        <button type="submit" id="editarTarea" class="btn bg-distant-horizon text-midnight-express">Guardar cambios</button>
+
                     </div>
                 </form>
             </div>
@@ -465,7 +481,60 @@
         });
     });
 
-    
+    document.querySelector('#formTaskEdit').addEventListener('submit', function(event) {
+            // Variables de validación
+            var isValid = true;
+            var errorMessage = '';
+        
+            // Obtener los valores de los campos
+            var presupuesto = document.getElementById('presupuesto').value.trim();
+            var description = document.getElementById('description').value.trim();
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+        
+            // Validar que ningún campo esté vacío
+            if (presupuesto === '' || description === '' || startDate === '' || endDate === '') {
+                isValid = false;
+                errorMessage += 'Ningún campo debe estar vacío.\n';
+            }
+        
+            // Validar la descripción (entre 5 y 80 caracteres)
+            if (description.length < 5 || description.length > 80) {
+                isValid = false;
+                errorMessage += 'La descripción debe tener entre 5 y 80 caracteres.\n';
+            }
+        
+            // Validar el presupuesto (número positivo, con o sin decimales)
+            var presupuestoPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
+            if (!presupuestoPattern.test(presupuesto) || parseFloat(presupuesto) <= 0) {
+                isValid = false;
+                errorMessage += 'El presupuesto debe ser un número positivo mayor a 0, con hasta dos decimales.\n';
+            }
+        
+            // Validar formato de fechas (DD/MM/YYYY)
+            var datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato de fecha en HTML5 (YYYY-MM-DD)
+            if (!datePattern.test(startDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de inicio debe tener el formato DD/MM/YYYY.\n';
+            }
+            if (!datePattern.test(endDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
+            }
+       
+            // Validar que la fecha de finalización sea posterior a la fecha de inicio
+            if (endDate <= startDate) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe ser posterior a la fecha de inicio.\n';
+            }
+        
+            // Si alguna validación falla, mostrar mensaje de error y prevenir el envío
+            if (!isValid) {
+                event.preventDefault();  // Solo prevenir si hay un error
+                alert(errorMessage);
+            }
+        });
+
     function getUserSel(projectId) {
         const modal = document.querySelector(`#busqueda-usuario_${projectId}`);
         const input = modal.querySelector('input[name="busqueda"]');
@@ -507,6 +576,20 @@
     document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
         const proyectoId = this.getAttribute('data-proyecto-id');
         const url = `{% url 'eliminar_proyecto' 0 %}`.replace('0', proyectoId);  // Reemplaza '0' con el proyecto_id real
+        window.location.href = url;
+    });
+
+    document.querySelectorAll('[data-bs-target="#confirmDeleteTarea"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const tareaId = this.getAttribute('data-tarea-id');
+            document.getElementById('confirmDeleteTarBtn').setAttribute('data-tarea-id', tareaId);
+        });
+    });
+
+    // Configura la URL de eliminación cuando se presiona el botón de confirmación
+    document.getElementById('confirmDeleteTarBtn').addEventListener('click', function () {
+        const tareaId = this.getAttribute('data-tarea-id');
+        const url = `{% url 'eliminar_tarea' 0 %}`.replace('0', tareaId);  // Reemplaza '0' con el tarea_id real
         window.location.href = url;
     });
 
