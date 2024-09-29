@@ -1,37 +1,44 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-class Usuario(AbstractUser):
-    documento = models.CharField(max_length=100)
-    codigo_pais = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=20)
-    #nacimiento = models.DateField
 
-    def __str__(self):
-        return self.first_name + " " + self.last_name if (self.username != 'admin') else 'admin'
-    
-#class Constructora(models.Model):
- #   nombre = models.CharField(max_length=100)
-  #  correo = models.CharField(max_length=50, unique = True)
-   # contraseña = models.CharField(max_length=20)
-   # nit = models.CharField(max_length=100)
-   # codigo_pais = models.CharField(max_length=100)
-   # telefono = models.CharField(max_length=20)
+class CustomUser(AbstractUser):
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    country_code = models.CharField(max_length=10)
+    is_employee = models.BooleanField(default=False)
+    is_company = models.BooleanField(default=False)
 
-   # def __str__(self):
-   #     return self.nombre + " " + self.nit if (self.correo != 'admin') else 'admin'
-    
+    def __str__(self) -> str:
+        return super().__str__()
 
-class Titulo(models.Model):
-    nombre = models.CharField(max_length=100)
-    
-    def __str__(self):
-        return self.nombre
 
-class UsuarioTitulo(models.Model):
-    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    id_titulo = models.ForeignKey(Titulo, on_delete=models.CASCADE)
+class Employee(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    doc = models.CharField(max_length=20, unique=True)
 
-    def __str__(self):
-        return self.id_usuario.username + " - " + self.id_titulo.nombre
+    def __str__(self) -> str:
+        return super().__str__()
+
+
+class Company(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    nit = models.CharField(max_length=20, unique=True)
+
+    def __str__(self) -> str:
+        return super().__str__()
+
+
+class Degree(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return super().__str__()
+
+
+class EmployeeDegree(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    degree = models.ForeignKey(Degree, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return super().__str__()

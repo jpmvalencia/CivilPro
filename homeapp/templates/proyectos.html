@@ -102,21 +102,7 @@
         margin-left: 10px;
         margin-bottom: 10px;
     }
-    .custom-margin {
-    margin-left: 20px; /* Ajusta el valor según sea necesario */
-    }
 
-    .bg-success {
-    background-color: green !important;
-}
-
-.bg-warning {
-    background-color: yellow !important;
-}
-
-.bg-danger {
-    background-color: red !important;
-}
 
    </style>
 </head>
@@ -135,8 +121,8 @@
                         alt="yugiweed" style="height: 180px; object-fit: cover;">
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title text-uppercase">{{ proyecto.nombre }}</h5>
-                    <p class="card-text">{{ proyecto.descripcion }}</p>
+                    <h5 class="card-title text-uppercase">{{ proyecto.name }}</h5>
+                    <p class="card-text">{{ proyecto.description }}</p>
                 </div>
             </div>
         </a>
@@ -149,16 +135,15 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl modal-fullscreen-lg-down">
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
-                    <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.nombre }}</h2>
-                    {% if show_link %}
-                    <button type="button" class="btn btn-danger custom-margin" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                    {% endif %}
+                    <h2 class="modal-title text-capitalize" id="projectModalLabel">{{ proyecto.name }}</h2>
                     
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     
-                    
+                    {% if show_link %}
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-proyecto-id="{{ proyecto.id }}">
+                        <i class="fa-solid fa-trash-can" style="color: #1f2123;"></i>
+                    </button>
+                    {% endif %}
 
                 </div>
                 
@@ -167,7 +152,6 @@
                         <img class="d-block mx-auto rounded-10"
                             src="https://th.bing.com/th/id/OIP.p3asnh-5bcoAzkwRnvXUgwHaEK?rs=1&pid=ImgDetMain" alt="construcción"
                             style="height: 100%; width: 450px; max-width: 100%;  object-fit: cover;">
-                           
                     </div>
 
                     <div class="container mt-3">
@@ -182,26 +166,26 @@
                                             data-bs-target="#buscar-tarea" data-bs-dismiss="modal" data-bs-toggle="modal">
                                             <i class="fa fa-search"></i>
                                         </button>
-
                                         <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="{% url 'nueva-tarea' proyecto.id %}">
                                             <i class="fa-solid fa-plus"></i>
                                         </a>
 
                                     </div>
                                 </div>
-                                
-                                
+                                <h1></h1>
                                 <div class="bg-midnight-express rounded-5 text-center mb-3" style="width: 80%; height: 400px; overflow-y: auto;">
                                     <div class="col-lg-5">
                                         <div class="margen">
                                             {% for tarea in tareas %}
-                                            {% if tarea.id_pro_tar == proyecto.id %}
-                                            <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}">
-                                            <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal">
-                                                <label class="container2">{{tarea.nombre_tar}}
-                                                    <input type="checkbox" value="{{tarea.id}}" id="tarea-{{tarea.id}}" name="id_pro_tar" value="{{proyecto.id}}">
+                                            {% if tarea.project.id == proyecto.id %}
+                                            <button type="button" class="btn btn-secondary btn-sm btn-fixed-width" data-bs-toggle="modal" data-bs-target="#tareaModal_{{ tarea.id }}">
+                                                <label class="container2">{{ tarea.name }}
+                                                    <input type="checkbox" value="{{ tarea.id }}" id="tarea-{{ tarea.id }}" name="id_pro_tar" disabled>
+                                                    <span class="checkmark"></span>
                                                 </label>
                                             </button>
+                                            <h1></h1>
+
                                             {% endif %}
                                             {% endfor %}
                                         </div>
@@ -218,40 +202,34 @@
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
                                         <h3 class="fw-bolder fs-4 lh-base">Información del proyecto</h3>
                                         <button type="button" class="btn">
-                                            <i class="fa-solid fa-pen-to-square text-distant-horizon zoom-in zoom-out"></i>
+                                            <i
+                                                class="fa-solid fa-pen-to-square text-distant-horizon zoom-in zoom-out"></i>
                                         </button>
                                     </div>
                                     <ul class="list-group">
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Constructora: </span>{{ proyecto.nombre }}
-                                        </li>
+                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.start_date }}</li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Fecha de inicio: </span>{{ proyecto.fecha_inicio|date:"d/m/Y" }}</li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                            class="fw-bold">Fecha de finalización: </span>{{ proyecto.fecha_final|date:"d/m/Y" }}
+                                                class="fw-bold">Fecha de finalización: </span>{{ proyecto.end_date }}
                                         </li>
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon">
                                             <span class="d-inline-flex flex-items-center flex-nowrap no-underline text-small mr-3">
                                                 <span class="color-fg-default text-bold mr-1">Presupuesto: </span>
-                                                <span>&nbsp;${{ proyecto.presupuesto }}</span>
+                                                <span>{{ proyecto.budget }},00 %</span>
                                             </span>
                                             <div class="progress">
-                                                <div class="progress-bar 
-                                                    {% if proyecto.presupuesto >= 20000 %}bg-success{% elif proyecto.presupuesto >= 2000 %}bg-warning{% else %}bg-danger{% endif %}" 
-                                                    role="progressbar" 
-                                                    aria-label="Presupuesto" 
-                                                    style="width: {{ proyecto.presupuesto }}%;" 
-                                                    aria-valuenow="{{ proyecto.presupuesto }}" 
-                                                    aria-valuemin="0" 
-                                                    aria-valuemax="100">
-                                                </div>
+                                                <div class="progress-bar" role="progressbar" aria-label="Presupuesto" 
+                                                     style="width: {{ proyecto.presupuesto }}%;" 
+                                                     aria-valuenow="{{ proyecto.presupuesto }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100"></div>
                                             </div>
                                         </li>
                                         
                                         
                                         
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Estado: </span>{{ proyecto.estado }}</li>
+                                                class="fw-bold">Estado: </span>{{ proyecto.status }}</li>
                                     </ul>
                                 </div>
                                 <hr>
@@ -266,17 +244,22 @@
                                     <ul>
 
                                         {% for usuario in usuarios %}
-                                        {% if usuario.id_pro_mie == proyecto.id %}
+                                        {% if usuario.project.id == proyecto.id %}
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-
-                                            <div class="fw-bold">{{ usuario.nombre }}</div>
-                                            <div>{{ usuario.nombre_rol_mie_pro }}
+                                            <div style="display: flex; align-items: center;">
+                                                <img class="m-3" src="https://avatar.iran.liara.run/public/36" alt="Perfil" style="width: 40px;">
+                                                <div style="display: flex; flex-direction: column;">
+                                                    <span class="fw-bold">{{ usuario.employee.first_name }} {{ usuario.employee.last_name }}</span>
+                                                    <span style="font-size: 0.9em; color: gray;">{{ usuario.role.name }}</span>
+                                                </div>
+                                            </div>
+                                            
+                                            
                                         </li>
                                         {% endif %}
                                         {% endfor %}
                                     </ul>
                                 </div>
-                                
                             </div>
                         </div>
                     </div>
@@ -285,7 +268,6 @@
         </div>
     </div>
     {% endfor %}
-
 
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -303,7 +285,22 @@
         </div>
     </div>
   
-    
+    <div class="modal fade" id="confirmDeleteTarea" tabindex="-1" aria-labelledby="confirmDeleteTareaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteTareaLabel">¿Está seguro que desea eliminar esta tarea?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Toda la información será eliminada permanentemente.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmDeleteTarBtn">Sí</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+
     {% for proyecto in proyectos %}
     <div class="modal fade" id="agregar-usuario-modal-{{ proyecto.id }}" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="max-height: 250px;">
@@ -324,7 +321,7 @@
                             <select class="form-select text-center" style="max-width: 60%;" id="sel-user-rol-{{ proyecto.id }}">
                                 <option value="">Seleccionar Rol</option>
                                 {% for rol in roles %}
-                                    <option value="{{ rol }}">{{ rol }}</option>
+                                    <option value="{{ rol.id }}">{{ rol.name }}</option>
                                 {% endfor %}
                             </select>
                             
@@ -392,37 +389,36 @@
             </div>
         </div>
     </div>
+    
     {% for tarea in tareas %}
-    <div class="modal fade" id="tareaModal" tabindex="-1" aria-labelledby="tareaModalLabel" aria-hidden="true">
+    <div class="modal fade" id="tareaModal_{{ tarea.id }}" tabindex="-1" aria-labelledby="tareaModalLabel_{{ tarea.id }}" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Tamaño pequeño -->
             <div class="modal-content bg-annapolis-blue rounded-10">
                 <div class="modal-header">
-                    <h2 class="modal-title text-capitalize" id="profileModalLabel">{{tarea.nombre_tar}}</h2>
-                    
+                    <h2 class="modal-title text-capitalize" id="tareaModalLabel_{{ tarea.id }}">{{ tarea.name }}</h2>  
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#confirmDeleteTarea" data-tarea-id="{{ tarea.id }}">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>           
                 </div>
-                
-              <div class="modal-body">
-                <form method="post" action="">
+              <div class="modal-body"> 
+                <form method="post" id="formTaskEdit" action="{% url 'editar_tarea' tarea.id %}">
                     {% csrf_token %}
                     <div class="row">
+                        <input  type="hidden"  id="title" name="title" value="{{ tarea.name }}"> 
                         <!-- Columna izquierda -->
                         <div class="col-md-6">
-                            <!-- Campo de entrada para el nombre -->
-
                             <div class="mb-3">
                                 <label for="description" class="form-label">Descripción</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.descripcion_tar }}">
+                                <input type="text"  class="form-control text-distant-horizon" id="description" name="description" value="{{ tarea.description }}">
                             </div>
-
-                            <!-- Campo de entrada para el apellido -->
                             <div class="mb-3">
                                 <label for="start-date" class="form-label">Fecha de inicio:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.fecha_inicio_tar|date:'d/m/Y' }}">
+                                <input type="date" class="form-control text-distant-horizon" id="start-date" name="start-date" value="{{ tarea.start_date|date:"Y-m-d" }}">
                             </div>
-                            <!-- Campo de entrada para el email -->
                             <div class="mb-3">
                                 <label for="end-date" class="form-label">Fecha de finalización:</label>
-                                <input type="text" readonly="readonly" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.fecha_final_tar|date:'d/m/Y' }}">
+                                <input type="date" class="form-control text-distant-horizon" id="end-date" name="end-date" value="{{ tarea.end_date|date:"Y-m-d" }}">
                             </div>
                         </div>
                         <!-- Columna derecha -->
@@ -430,19 +426,27 @@
                             <!-- Campo de entrada para la contraseña -->
                             <div class="mb-3">
                                 <label for="presupuesto" class="form-label">Presupuesto</label>
-                                <input type="text" readonly="readonly" step="0.01" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.presupuesto_tar }}">
+                                <input type="float" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" value="{{ tarea.budget }}">
                             </div>
-
+                            <div class="mb-3"></div>
+                                <label for="status" class="form-label">Estado</label>
+                                <select name="status" id="status" class="form-control text-distant-horizon custom-select-style" style="background-color: rgb(var(--bs-body-bg-rgb)); color: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;" required>
+                                    {% for status in status_list %}
+                                    <option  style="background-color:rgb(var(--bs-body-bg-rgb)); color: #000;" value="{{ status.id }}" {% if tarea.status.id == status.id %}selected{% endif %}>
+                                        {{ status.status }}
+                                    </option>{% endfor %}
+                                </select>
+                            </div>
                             {% comment %} <div class="mb-3">
                                 <label for="responsable" class="form-label">Responsable</label>
                                 <input type="text" readonly="readonly" step="0.01" name="responsable" id="responsable" class="form-control text-distant-horizon" value="">
                             </div> {% endcomment %}
                         </div>
+                        <button type="submit" id="editarTarea" class="btn bg-distant-horizon text-midnight-express">Guardar cambios</button>
+
                     </div>
-                    
                 </form>
             </div>
-            
                     <!-- Puedes agregar más información aquí -->
                 </div>
             </div>
@@ -477,7 +481,60 @@
         });
     });
 
-    
+    document.querySelector('#formTaskEdit').addEventListener('submit', function(event) {
+            // Variables de validación
+            var isValid = true;
+            var errorMessage = '';
+        
+            // Obtener los valores de los campos
+            var presupuesto = document.getElementById('presupuesto').value.trim();
+            var description = document.getElementById('description').value.trim();
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+        
+            // Validar que ningún campo esté vacío
+            if (presupuesto === '' || description === '' || startDate === '' || endDate === '') {
+                isValid = false;
+                errorMessage += 'Ningún campo debe estar vacío.\n';
+            }
+        
+            // Validar la descripción (entre 5 y 80 caracteres)
+            if (description.length < 5 || description.length > 80) {
+                isValid = false;
+                errorMessage += 'La descripción debe tener entre 5 y 80 caracteres.\n';
+            }
+        
+            // Validar el presupuesto (número positivo, con o sin decimales)
+            var presupuestoPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
+            if (!presupuestoPattern.test(presupuesto) || parseFloat(presupuesto) <= 0) {
+                isValid = false;
+                errorMessage += 'El presupuesto debe ser un número positivo mayor a 0, con hasta dos decimales.\n';
+            }
+        
+            // Validar formato de fechas (DD/MM/YYYY)
+            var datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato de fecha en HTML5 (YYYY-MM-DD)
+            if (!datePattern.test(startDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de inicio debe tener el formato DD/MM/YYYY.\n';
+            }
+            if (!datePattern.test(endDate)) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
+            }
+       
+            // Validar que la fecha de finalización sea posterior a la fecha de inicio
+            if (endDate <= startDate) {
+                isValid = false;
+                errorMessage += 'La fecha de finalización debe ser posterior a la fecha de inicio.\n';
+            }
+        
+            // Si alguna validación falla, mostrar mensaje de error y prevenir el envío
+            if (!isValid) {
+                event.preventDefault();  // Solo prevenir si hay un error
+                alert(errorMessage);
+            }
+        });
+
     function getUserSel(projectId) {
         const modal = document.querySelector(`#busqueda-usuario_${projectId}`);
         const input = modal.querySelector('input[name="busqueda"]');
@@ -506,10 +563,7 @@
             // Maybe close modal or show a message
         })
         .catch(error => console.error('Error:', error));
-
-
     }
-
     
     document.querySelectorAll('[data-bs-target="#confirmDeleteModal"]').forEach(button => {
         button.addEventListener('click', function () {
@@ -522,6 +576,20 @@
     document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
         const proyectoId = this.getAttribute('data-proyecto-id');
         const url = `{% url 'eliminar_proyecto' 0 %}`.replace('0', proyectoId);  // Reemplaza '0' con el proyecto_id real
+        window.location.href = url;
+    });
+
+    document.querySelectorAll('[data-bs-target="#confirmDeleteTarea"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const tareaId = this.getAttribute('data-tarea-id');
+            document.getElementById('confirmDeleteTarBtn').setAttribute('data-tarea-id', tareaId);
+        });
+    });
+
+    // Configura la URL de eliminación cuando se presiona el botón de confirmación
+    document.getElementById('confirmDeleteTarBtn').addEventListener('click', function () {
+        const tareaId = this.getAttribute('data-tarea-id');
+        const url = `{% url 'eliminar_tarea' 0 %}`.replace('0', tareaId);  // Reemplaza '0' con el tarea_id real
         window.location.href = url;
     });
 

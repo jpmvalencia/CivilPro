@@ -1,8 +1,8 @@
+from authentapp.models import Employee, EmployeeDegree, Company, CustomUser, Degree
 from django.contrib import admin
-from .models import Usuario, Titulo, UsuarioTitulo#, Constructora
 
-# Register your models here.
-admin.site.register(Usuario)
-admin.site.register(Titulo)
-admin.site.register(UsuarioTitulo)
-#admin.site.register(Constructora)
+admin.site.register(Employee)
+admin.site.register(Company)
+admin.site.register(CustomUser)
+admin.site.register(Degree)
+admin.site.register(EmployeeDegree)

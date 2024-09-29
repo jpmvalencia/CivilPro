@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'homeapp'
      ]
 
+AUTH_USER_MODEL = 'authentapp.CustomUser'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,18 +79,18 @@ WSGI_APPLICATION = 'civilpro.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.oracle",
-        "NAME": "xe",
-        "USER": "civilproadmin",
-        "PASSWORD": "31415926",
-        "HOST": "localhost",
-        "PORT": "1521",
+    # "default": {
+    #     "ENGINE": "django.db.backends.oracle",
+    #     "NAME": "xe",
+    #     "USER": "CIVIL_PRO",
+    #     "PASSWORD": "cppsswd",
+    #     "HOST": "localhost",
+    #     "PORT": "1521",
+    # }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-    #'default': {
-    #    'ENGINE': 'django.db.backends.sqlite3',
-    #    'NAME': BASE_DIR / 'db.sqlite3',
-    #}
 }
 
 
@@ -134,9 +136,6 @@ LOGIN_URL = '/login/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTH_USER_MODEL = 'authentapp.Usuario'
-
 
 JAZZMIN_SETTINGS = {
     'site_header': 'CivilPro',

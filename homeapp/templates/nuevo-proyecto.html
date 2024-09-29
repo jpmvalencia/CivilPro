@@ -3,16 +3,11 @@
 {% block content %}
 
 <div class="container bg-annapolis-blue rounded-10 p-5" style="max-width: 800px;">
-    <form method="post">
+    <form method="post" id="formProject" >
         {% csrf_token %}
         <div class="form-group">
             <label for="title">Título del proyecto</label>
             <input type="text" name="title" id="title" class="form-control text-distant-horizon" autocomplete="off"
-                required>
-        </div>
-        <div class="form-group">
-            <label for="presupuesto">Presupuesto</label>
-            <input type="number" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" autocomplete="off"
                 required>
         </div>
         <div class="form-group">
@@ -28,10 +23,79 @@
             <label for="end-date">Fecha de finalización</label>
             <input type="date" name="end-date" id="end-date" class="form-control text-distant-horizon" required>
         </div>
+        <div class="form-group">
+            <label for="presupuesto">Presupuesto</label>
+            <input type="number" name="presupuesto" id="presupuesto" class="form-control text-distant-horizon" autocomplete="off"
+                required>
+        </div>
         <div class="text-center">
             <button type="submit" class="btn bg-distant-horizon text-midnight-express mt-3">Crear proyecto</button>
         </div>
     </form>
 </div>
+
+<script>
+document.querySelector('#formProject').addEventListener('submit', function(event) {
+    // Variables de validación
+    var isValid = true;
+    var errorMessage = '';
+
+    // Obtener los valores de los campos
+    var title = document.getElementById('title').value.trim();
+    var presupuesto = document.getElementById('presupuesto').value.trim();
+    var description = document.getElementById('description').value.trim();
+    var startDate = document.getElementById('start-date').value;
+    var endDate = document.getElementById('end-date').value;
+
+    // Validar que ningún campo esté vacío
+    if (title === '' || presupuesto === '' || description === '' || startDate === '' || endDate === '') {
+        isValid = false;
+        errorMessage += 'Ningún campo debe estar vacío.\n';
+    }
+
+    // Validar el título (entre 5 y 20 caracteres)
+    if (title.length < 5 || title.length > 20) {
+        isValid = false;
+        errorMessage += 'El título debe tener entre 5 y 20 caracteres.\n';
+    }
+
+    // Validar la descripción (entre 5 y 80 caracteres)
+    if (description.length < 5 || description.length > 80) {
+        isValid = false;
+        errorMessage += 'La descripción debe tener entre 5 y 80 caracteres.\n';
+    }
+
+    // Validar el presupuesto (número positivo, con o sin decimales)
+    var presupuestoPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
+    if (!presupuestoPattern.test(presupuesto) || parseFloat(presupuesto) <= 0) {
+        isValid = false;
+        errorMessage += 'El presupuesto debe ser un número positivo mayor a 0, con hasta dos decimales.\n';
+    }
+
+    // Validar formato de fechas (DD/MM/YYYY)
+    var datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato de fecha en HTML5 (YYYY-MM-DD)
+    if (!datePattern.test(startDate)) {
+        isValid = false;
+        errorMessage += 'La fecha de inicio debe tener el formato DD/MM/YYYY.\n';
+    }
+    if (!datePattern.test(endDate)) {
+        isValid = false;
+        errorMessage += 'La fecha de finalización debe tener el formato DD/MM/YYYY.\n';
+    }
+
+    // Validar que la fecha de finalización sea posterior a la fecha de inicio
+    if (endDate <= startDate) {
+        isValid = false;
+        errorMessage += 'La fecha de finalización debe ser posterior a la fecha de inicio.\n';
+    }
+
+    // Si alguna validación falla, mostrar mensaje de error y prevenir el envío
+    if (!isValid) {
+        event.preventDefault();  // Solo prevenir si hay un error
+        alert(errorMessage);
+    }
+});
+
+</script>
 
 {% endblock %}

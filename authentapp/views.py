@@ -1,96 +1,160 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import auth
-from django.contrib.auth import authenticate
-from django.db import connection
-
+from django.shortcuts import redirect, render
+from authentapp.models import Company, Degree, Employee, EmployeeDegree
 from homeapp.views import proyectos_info
-from .models import Usuario, Titulo, UsuarioTitulo#, Constructora
 
-    
-def login(request):
-    if request.method == 'GET':
-        return render(request, 'login.html')
+User = get_user_model()
+
+
+def signin(request):
+    if request.method == "GET":
+        return render(request, "login.html")
     else:
-        user = auth.authenticate(request, username=request.POST['email'], password=request.POST['password'])
-        if user is None:
-            return render(request, 'login.html', {'error': 'El usuario o contraseña es incorrecto.', 'data': request.POST})
-        auth.login(request, user)
-        return redirect(proyectos_info)
+        username = request.POST["email"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
 
-    
+        if user is not None:
+            login(request, user)
+            print(request.user.username)
+            return redirect(proyectos_info)
 
-# Create your views here.
+        # Si el usuario no es autenticado, muestra un mensaje de error o redirige a login
+        return render(request, "login.html", {"error": "Credenciales invalidas"})
 
-def signup(request):
-    if request.method == 'GET':
-        return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all()})
+
+def signup_usu(request):
+    if request.method == "GET":
+        return render(request, "signup.html", {"degrees": Degree.objects.all()})
     else:
-        if request.POST['password'] == request.POST['repassword']:
+        if request.POST["password"] == request.POST["repassword"]:
             try:
-                user = Usuario.objects.create_user(
-                    username=request.POST['your_email'],
-                    password=request.POST['password'],
-                    first_name=request.POST['first_name'],
-                    last_name=request.POST['last_name'],
-                    email=request.POST['your_email'],
-                    documento=request.POST['doc_id'],
-                    codigo_pais=request.POST['code'],
-                    telefono=request.POST['phone']
+
+                doc = request.POST["doc_id"]
+
+                # Verificar si ya existe un empleado con el mismo doc
+                if Employee.objects.filter(doc=doc).exists():
+                    return render(
+                        request,
+                        "signup.html",
+                        {
+                            "degrees": Degree.objects.all(),
+                            "error": "Ya existe un empleado con ese documento.",
+                            "data": request.POST,
+                        },
                     )
-                titulos = request.POST.getlist('titles[]')
-                for titulo_nombre in titulos:
-                    titulo = Titulo.objects.get(nombre=titulo_nombre)
-                    usuario_titulo = UsuarioTitulo.objects.create(
-                        id_usuario=user, id_titulo=titulo
-                        )
-                print(request.POST)
-                auth.login(request, user)
-                return redirect('../login')
-            except:
-                return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all(), 'error': 'Ya existe un usuario registrado con ese correo.', 'data': request.POST})
-        return render(request, 'signup.html', {'titulos_disponibles': Titulo.objects.all(), 'error': 'Las contraseñas no coinciden.', 'data': request.POST})
-    
 
-def signupcon(request):
-    if request.method == 'GET':
-        return render(request, 'signup-con.html')
-    else:
-        if request.POST['password'] == request.POST['repassword']:
-            try:
-                with connection.cursor() as cursor:
-                    nit_id = request.POST['nit_id']
-                    first_name = request.POST['first_name']
-                    email = request.POST['your_email']
-                    password = request.POST['password']
-                    telefono = request.POST['phone']
+                username = request.POST["your_email"]
+                password = request.POST["password"]
+                first_name = request.POST["first_name"]
+                last_name = request.POST["last_name"]
+                email = request.POST["your_email"]
+                country_code = request.POST["code"]
+                phone = request.POST["phone"]
 
-                    query = """
-                        INSERT INTO constructoras (nit_con, nombre_con, correo_con, contraseña_con, telefono_con)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """
-                    cursor.execute(query, [nit_id, first_name, email, password, telefono])
-                
-                user = Usuario.objects.create_user(
-                    username=email,
+                user = User.objects.create_user(
+                    username=username,
                     password=password,
-                    first_name=first_name,
                     email=email,
-                    documento=nit_id,
-                    codigo_pais=request.POST['code'],
-                    telefono=request.POST['phone']
+                    first_name=first_name,
+                    last_name=last_name,
+                    phone=phone,
+                    country_code=country_code,
+                    is_employee=True,
                 )
 
-                print(request.POST)
-                auth.login(request, user)
-                return redirect('../login')
+                employee = Employee(
+                    user=user,
+                    doc=doc,
+                )
+
+                employee.save()
+
+                degrees = request.POST.getlist("titles[]")
+                for degree_name in degrees:
+                    degree = Degree.objects.get(name=degree_name)
+                    EmployeeDegree.objects.create(employee=employee, degree=degree)
+                return redirect("../login")
             except Exception as e:
-                print(e)  # Log the error
-                return render(request, 'signup-con.html', {'error': 'Ya existe un usuario registrado con ese correo.', 'data': request.POST})
-        return render(request, 'signup-con.html', {'error': 'Las contraseñas no coinciden.', 'data': request.POST})
+                print(e)
+                return render(
+                    request,
+                    "signup.html",
+                    {
+                        "degrees": Degree.objects.all(),
+                        "error": "Ya existe un usuario registrado con ese correo.",
+                        "data": request.POST,
+                    },
+                )
+        return render(
+            request,
+            "signup.html",
+            {
+                "degrees": Degree.objects.all(),
+                "error": "Las contraseñas no coinciden.",
+                "data": request.POST,
+            },
+        )
+
+
+def signup_con(request):
+    if request.method == "GET":
+        return render(request, "signup-con.html")
+    else:
+        if request.POST["password"] == request.POST["repassword"]:
+            try:
+                nit = request.POST["nit_id"]
+                if Company.objects.filter(nit=nit).exists():
+                    return render(
+                        request,
+                        "signup-con.html",
+                        {
+                            "error": "Ya existe una compañía con ese NIT.",
+                            "data": request.POST,
+                        },
+                    )
+                username = request.POST["your_email"]
+                name = request.POST["first_name"]
+                email = request.POST["your_email"]
+                password = request.POST["password"]
+                country_code = request.POST["code"]
+                phone = request.POST["phone"]
+
+                user = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    email=email,
+                    first_name=name,
+                    phone=phone,
+                    country_code=country_code,
+                    is_company=True,
+                )
+
+                company = Company(
+                    user=user,
+                    nit=nit,
+                )
+                company.save()
+
+                return redirect("../login")
+            except Exception as e:
+                return render(
+                    request,
+                    "signup-con.html",
+                    {
+                        "error": "Ya existe un usuario registrado con ese correo.",
+                        "data": request.POST,
+                    },
+                )
+        return render(
+            request,
+            "signup-con.html",
+            {"error": "Las contraseñas no coinciden.", "data": request.POST},
+        )
 
 
 @login_required
 def signout(request):
-    auth.logout(request)
-    return redirect('/login')
+    logout(request)
+    return redirect("/login")
