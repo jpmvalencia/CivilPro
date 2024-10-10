@@ -33,6 +33,15 @@ class Task(models.Model):
        
 class Role(models.Model):
     name = models.CharField(max_length=100)
+
+class Chat(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    employee = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    message = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.project.name + " - " + self.employee.firstname + self.employee.lastname
     
 class ProjectEmployee(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)

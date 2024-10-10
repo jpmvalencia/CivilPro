@@ -141,6 +141,35 @@ button.btnStatus {
         margin-left: 10px;
         margin-bottom: 10px;
     }
+    .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 500px; /* Altura del chat */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.messages-area {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #9BA4B5;
+    
+    height: 100%; /* Para ajustar al tamaño del contenedor */
+}
+
+.message-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #0c0c0c;
+    border-radius: 8px;
+}
+
+.input-group {
+    padding: 10px;
+    background-color: #1c1c1c;
+}
 
 
    </style>
@@ -289,7 +318,41 @@ button.btnStatus {
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
+
+
+
+
+
+
+
+                    <div class="chat-container">
+                        <!-- Zona para mostrar mensajes -->
+                        <div class="messages-area">
+                            {% for mensaje in chat_messages %}
+                                <div class="message-item">
+                                    <p><strong>{{ mensaje.employee.first_name }} {{ mensaje.employee.last_name }}</strong> - {{ mensaje.employee.role.name }}</p>
+                                    <p>{{ mensaje.message }}</p>
+                                    <hr>
+                                </div>
+                            {% empty %}
+                                <p>No hay mensajes en este proyecto aún.</p>
+                            {% endfor %}
+                        </div>
+                    
+                        <!-- Zona para escribir un mensaje -->
+                        <div class="input-group">
+                            <textarea id="commentInput" class="form-control" placeholder="Escribe un comentario..." style="color: white; background-color: #1c1c1c;"></textarea>
+                            <button type="button" class="btn btn-primary" id="sendCommentBtn" style="color: white;"
+                                onclick="sendMessage('{{ proyecto.id }}', '{{ usuario_actual.email }}')">Enviar</button>
+                        </div>
+                    </div>
+                   
+                    
+
+
                 </div>
             </div>
         </div>
@@ -632,6 +695,23 @@ button.btnStatus {
             }
         });
 
+        function sendMessage(projectId, userEmail) {
+    // Obtener el mensaje del textarea
+    var message = document.getElementById('commentInput').value;
+
+    // Validar que el mensaje no esté vacío
+    if (!message) {
+        alert('Por favor, escribe un mensaje antes de enviar.');
+        return;
+    }
+
+    // Construir la URL con los parámetros necesarios
+    var url = "{% url 'agregar_menssaje' %}?projectId=" + projectId + "&userEmail=" + userEmail + "&message=" + encodeURIComponent(message);
+
+    // Redirigir a la URL
+    window.location.href = url;
+    }
+
     function getUserSel(projectId) {
         const modal = document.querySelector(`#busqueda-usuario_${projectId}`);
         const input = modal.querySelector('input[name="busqueda"]');
@@ -681,6 +761,37 @@ button.btnStatus {
             const tareaId = this.getAttribute('data-tarea-id');
             document.getElementById('confirmDeleteTarBtn').setAttribute('data-tarea-id', tareaId);
         });
+    });
+
+    document.getElementById("sendCommentBtn").addEventListener("click", function() {
+        const comment = document.getElementById("commentInput").value;
+        const projectId = "{{ proyecto.id }}";  // Suponiendo que tienes acceso al proyecto actual en tu template
+        const userEmail = "{{ request.user.email }}";  // Suponiendo que el usuario está autenticado
+
+        if (comment.trim() !== "") {
+            // Hacer la llamada AJAX al backend
+            fetch("{% url 'agregar_menssaje' %}?projectId=" + projectId + "&userEmail=" + userEmail + "&message=" + encodeURIComponent(comment), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Limpiar el campo de texto y mostrar un mensaje de éxito
+                    document.getElementById("commentInput").value = "";
+                    alert("Comentario enviado con éxito.");
+                } else {
+                    alert("Error al enviar el comentario.");
+                }
+            })
+            .catch(error => {
+                console.error("Error en la solicitud:", error);
+                alert("Ocurrió un error al intentar enviar el comentario.");
+            });
+        } else {
+            alert("Por favor, escribe un comentario.");
+        }
     });
 
     // Configura la URL de eliminación cuando se presiona el botón de confirmación
