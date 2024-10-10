@@ -21,8 +21,43 @@
   text-align:justify;
 }
 
+button.btnStatus {
+  width: 300px; /* Ancho fijo para todos los botones */
+  white-space: nowrap; /* Evita que el texto se desborde a una nueva línea */
+  overflow: hidden; /* Oculta el texto que no cabe */
+  text-overflow: ellipsis; /* Muestra '...' si el texto es demasiado largo */
+}
+
+
 /* Hide the browser's default checkbox */
 .container2 input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.container3 {
+  display: block;
+  position: relative;
+  padding: 1px 145px 8px 3em;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-align: justify;
+  width: 50%; /* Ancho del 50% */
+  margin-left: auto; /* Centrar horizontalmente */
+  margin-right: auto; /* Centrar horizontalmente */
+}
+
+
+/* Hide the browser's default checkbox */
+.container3 input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -56,6 +91,10 @@
   position: absolute;
   
   display: none;
+}
+
+.section {
+    margin-bottom: 20px; /* Ajusta el valor para más o menos separación */
 }
 
 /* Show the checkmark when checked */
@@ -157,15 +196,15 @@
                     <div class="container mt-3">
                         <div class="row">
                             <div class="col-lg-7">
-                                
                                 <div class="d-flex justify-content-between bg-midnight-express rounded-10" style="width: 80%; height: 40px; text-align: center;">
                                     <h3 class="fw-bolder fs-4 lh-base">Tareas</h3>
                                     <div style="display: flex; gap: 10px;">
 
                                         <button type="button" class="btn text-distant-horizon zoom-in zoom-out"
-                                            data-bs-target="#buscar-tarea" data-bs-dismiss="modal" data-bs-toggle="modal">
-                                            <i class="fa fa-search"></i>
+                                            data-bs-target="#statusModal_{{ tarea.id }}" data-bs-dismiss="modal" data-bs-toggle="modal"  data-tarea-id="{{ tarea.id }}">
+                                            <i class="fa-solid fa-expand"></i>
                                         </button>
+
                                         <a class="btn text-distant-horizon zoom-in zoom-out" data-bs-target="#crear-tarea" href="{% url 'nueva-tarea' proyecto.id %}">
                                             <i class="fa-solid fa-plus"></i>
                                         </a>
@@ -185,18 +224,12 @@
                                                 </label>
                                             </button>
                                             <h1></h1>
-
                                             {% endif %}
                                             {% endfor %}
                                         </div>
-                                    </div>        
-                                    
+                                    </div>      
                                 </div>
-                                
-                                
                             </div>
-
-
                             <div class="col-lg-5">
                                 <div class="row">
                                     <div class="d-flex justify-content-between bg-midnight-express rounded-10">
@@ -225,9 +258,6 @@
                                                      aria-valuemax="100"></div>
                                             </div>
                                         </li>
-                                        
-                                        
-                                        
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
                                                 class="fw-bold">Estado: </span>{{ proyecto.status }}</li>
                                     </ul>
@@ -242,7 +272,6 @@
                                         </button>
                                     </div>
                                     <ul>
-
                                         {% for usuario in usuarios %}
                                         {% if usuario.project.id == proyecto.id %}
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon">
@@ -253,8 +282,6 @@
                                                     <span style="font-size: 0.9em; color: gray;">{{ usuario.role.name }}</span>
                                                 </div>
                                             </div>
-                                            
-                                            
                                         </li>
                                         {% endif %}
                                         {% endfor %}
@@ -378,17 +405,87 @@
     </a>
     {% endif %}
 
-    <div class="modal fade" id="buscar-tarea" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+    
+    {% for proyecto in proyectos %}
+    <div class="modal fade" id="statusModal_{{ tarea.id }}" tabindex="-1" aria-labelledby="projectModalLabel_{{ tarea.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content bg-annapolis-blue rounded-10">
-                <div class="modal-body">
-                    <input type="text" name="busqueda" id="busqueda" class="form-control text-distant-horizon"
-                        placeholder="Buscar tareas">
-                    
+                <div class="modal-header">
+                    <h3 class="modal-title" id="projectModalLabel_{{ tarea.id }}">Estados de tareas</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body  align-items-center"> 
+                    <div class="row  align-items-center">
+                        <div class="col order-first">
+                            {% for status in status_list %}
+                            
+                                {% if forloop.first %}
+                                
+                                    <div class="col" style="background-color:rgb(var(--bs-body-bg-rgb)); color: #fff;" value="{{ status.id }}">
+                                        <h5>{{ status.status }}</h5>
+                                        {% for tarea in tareas %}
+                                            {% if tarea.project.id == proyecto.id and tarea.status.id == status.id %}
+                                                <button type="button" class="btnStatus btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#tareaModal_{{ tarea.id }}">
+                                                    <label class="container2">{{ tarea.name }}
+                                                        <input type="checkbox" value="{{ tarea.id }}" id="tarea-{{ tarea.id }}" name="id_pro_tar" disabled>
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                </button>
+                                                <h1></h1>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col">
+                            {% for status in status_list %}
+                                {% if forloop.counter == 2 %} 
+                                <div class="col" style="background-color:rgb(var(--bs-body-bg-rgb)); color: #fff;" value="{{ status.id }}">
+                                    <h5>{{ status.status }}</h5>
+                                    {% for tarea in tareas %}
+                                        {%  if tarea.project.id == proyecto.id and tarea.status.id == status.id %}
+                                            <button type="button" class="btnStatus btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#tareaModal_{{ tarea.id }}">
+                                                <label class="container2">{{ tarea.name }}
+                                                    <input type="checkbox" value="{{ tarea.id }}" id="tarea-{{ tarea.id }}" name="id_pro_tar" disabled>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </button>
+                                            <h1></h1>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col order-last">
+                            {% for status in status_list %}
+                                {% if forloop.counter == 3 %}  
+                                    <div class="col" style="background-color:rgb(var(--bs-body-bg-rgb)); color: #fff;" value="{{ status.id }}">
+                                        <h5>{{ status.status }}</h5>
+                                        {% for tarea in tareas %}
+                                            {% if tarea.project.id == proyecto.id and tarea.status.id == status.id%}
+                                                    <button type="button" class="btnStatus btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#tareaModal_{{ tarea.id }}">
+                                                        <label class="container2">{{ tarea.name }}
+                                                            <input type="checkbox" value="{{ tarea.id }}" id="tarea-{{ tarea.id }}" name="id_pro_tar" disabled>
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </button>
+                                                    <h1></h1>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+      
+    {% endfor %}
+    
     
     {% for tarea in tareas %}
     <div class="modal fade" id="tareaModal_{{ tarea.id }}" tabindex="-1" aria-labelledby="tareaModalLabel_{{ tarea.id }}" aria-hidden="true">
