@@ -4,7 +4,9 @@ from django.contrib import messages
 from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from homeapp.models import Project, ProjectEmployee, Role, StatusTask, Task
+from homeapp.models import Project, ProjectEmployee, Role, StatusTask, Task, Chat
+from django.shortcuts import redirect
+
 
 # Create your views here.
 
@@ -70,6 +72,30 @@ def nueva_tarea(request, id_proyecto):
             # Mostrar mensaje de error en caso de fallo
             status_list = StatusTask.objects.all()
             return render(request, 'nueva-tarea.html', {'error': 'Ingresa datos válidos.', 'status_list': status_list}) 
+
+
+@login_required
+def agregar_menssaje(request):
+    if request.method == 'GET':
+        project_id = request.GET.get('projectId')
+        user_email = request.GET.get('userEmail')
+        message = request.GET.get('message')
+        
+        # Obtener el proyecto
+        project = Project.objects.get(id=project_id)
+
+        # Obtener el usuario relacionado con el correo electrónico
+        user = CustomUser.objects.get(email=user_email)
+
+        # Crear y guardar el mensaje en el modelo Chat
+        chat_message = Chat(project=project, employee=user, message=message)
+        chat_message.save()
+
+        # Redirigir a la página de proyectos
+        return redirect('proyectos')
+
+    return redirect('proyectos')
+
 
 @login_required
 def editar_tarea(request, id_tarea):
@@ -143,22 +169,35 @@ def proyectos_info(request):
     usuarios = ProjectEmployee.objects.all()
     status_list = StatusTask.objects.all()
 
+    # Obtener todos los mensajes de chat
+    chat_messages = Chat.objects.all()
 
-    if (usuario_actual.is_employee):
+    if usuario_actual.is_employee:
         try:
+            # Filtrar los proyectos por el usuario actual (empleado)
             proyectos = Project.objects.filter(projectemployee__employee=usuario_actual)
         except Employee.DoesNotExist:
-            # Manejo del caso en el que no exista un Employee asociado al usuario
             proyectos = []
     else:
         show_link = True
         try:
+            # Filtrar los proyectos por la compañía del usuario actual (si es administrador)
             company = usuario_actual.company
             proyectos = Project.objects.filter(company=company)
         except Employee.DoesNotExist:
-            # Manejo del caso en el que no exista un Employee asociado al usuario
             proyectos = []
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link, 'usuarios': usuarios, 'status_list': status_list})
+
+    # Pasar los datos al template, incluyendo los mensajes de chat
+    return render(request, 'proyectos.html', {
+        'proyectos': proyectos,
+        'usuario_actual': usuario_actual,
+        'tareas': tareas,
+        'roles': roles,
+        'show_link': show_link,
+        'usuarios': usuarios,
+        'status_list': status_list,
+        'chat_messages': chat_messages  # Mensajes de chat
+    })
 
 @login_required
 def actualizar_perfil(request):
