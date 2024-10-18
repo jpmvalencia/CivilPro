@@ -125,12 +125,19 @@ def nuevo_proyecto(request):
                 budget=budget,
                 company=company  # Pasar la instancia de la compañía, no el NIT
             )
+            try:
+                proyecto.save()
+                request.custom_success = 'Proyecto Creado Correctamente'
 
+            except Exception as e:
+                request.custom_success = 'Error al guardar el proyecto'
             # Guardar el proyecto en la base de datos
-            proyecto.save()
+            
+            
             return redirect('proyectos')  # Redirige a la página de proyectos
         except Exception as e:
             # Mostrar mensaje de error en caso de fallo
+            raise 
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
 
 @login_required
@@ -143,6 +150,7 @@ def proyectos_info(request):
     usuarios = ProjectEmployee.objects.all()
     status_list = StatusTask.objects.all()
 
+    
 
     if (usuario_actual.is_employee):
         try:
