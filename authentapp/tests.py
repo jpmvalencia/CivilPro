@@ -1,5 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.contrib.auth.models import User
+
 from django.contrib.auth import get_user_model
 from authentapp.models import Employee, Degree, EmployeeDegree, Company
 
@@ -82,21 +84,33 @@ class SigninTestCase(TestCase):
             username='testuser@example.com',
             password='testpassword123'
         )
+
+        Company.objects.create(user=self.user, nit="123456789")
     
     def test_signin_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'login.html')
+
+    def test_signin_post_success(self):
+        data = {
+            'email': 'testuser@example.com',
+            'password': 'testpassword123'
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('proyectos'))
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
     
-    """def test_signin_post_success(self):
+    def test_signin_post_success(self):
         data = {
             'email': 'testuser@example.com',
             'password': 'testpassword123'
 }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('signin'))
-        self.assertTrue(response.wsgi_request.user.is_authenticated)"""
+        self.assertRedirects(response, reverse('proyectos'))
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
 
     def test_signin_post_invalid_credentials(self):
         data = {
@@ -166,3 +180,4 @@ class TestSignupCon(TestCase):
         self.assertEqual(response.status_code, 302)  # Redirección a la página de login
         self.assertTrue(User.objects.filter(username="testuser@example.com").exists())
         self.assertTrue(Company.objects.filter(nit="123456789").exists())
+

@@ -113,6 +113,9 @@ def nuevo_proyecto(request):
             end_date = request.POST.get("end-date")
             budget = request.POST.get("presupuesto")
 
+            if not name or not description or not start_date or not end_date or not budget:
+                raise ValueError("Datos inválidos")
+            
             # Obtener la instancia de la compañía del usuario
             company = request.user.company
             
@@ -136,8 +139,7 @@ def nuevo_proyecto(request):
             
             return redirect('proyectos')  # Redirige a la página de proyectos
         except Exception as e:
-            # Mostrar mensaje de error en caso de fallo
-            raise 
+            # Mostrar mensaje de error en caso de fallo 
             return render(request, 'nuevo-proyecto.html', {'error': 'Ingresa datos válidos.'})
 
 @login_required
