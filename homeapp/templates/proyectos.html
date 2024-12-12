@@ -3,10 +3,6 @@
 {% block content %}
 <head>
     <style>
-        .progress {
-          height: 8px; /* Ajusta este valor según lo delgado que quieras la barra de progreso */
-        }
-
         .container2 {
   display: block;
   position: relative;
@@ -141,8 +137,6 @@ button.btnStatus {
         margin-left: 10px;
         margin-bottom: 10px;
     }
-
-
    </style>
 </head>
 
@@ -245,21 +239,23 @@ button.btnStatus {
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
                                                 class="fw-bold">Fecha de finalización: </span>{{ proyecto.end_date }}
                                         </li>
-                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon">
-                                            <span class="d-inline-flex flex-items-center flex-nowrap no-underline text-small mr-3">
-                                                <span class="color-fg-default text-bold mr-1">Presupuesto: </span>
-                                                <span>{{ proyecto.budget }},00 %</span>
-                                            </span>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" aria-label="Presupuesto" 
-                                                     style="width: {{ proyecto.presupuesto }}%;" 
-                                                     aria-valuenow="{{ proyecto.presupuesto }}" 
-                                                     aria-valuemin="0" 
-                                                     aria-valuemax="100"></div>
-                                            </div>
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"> 
+                                                <span class="color-fg-default fw-bold mr-1">Presupuesto total: </span>
+                                                <span>{{ proyecto.budget }}$</span>
                                         </li>
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"> 
+                                                <span class="color-fg-default fw-bold mr-1">Presupuesto restante: </span>
+                                                <span>{{ proyecto.remaining_budget }}$</span>   
+                                            </span>
+                                        </li>    
+                                        <li class="list-group-item border-0 bg-transparent text-distant-horizon"> 
+                                            <div style="width: 100%; background-color: #e0e0e0; border-radius: 12px; height: 20px;">
+                                                <div style="width: {{ proyecto.used_budget_percentage|floatformat:0 }}%; background: linear-gradient(to right, #134d6ccf, #0040ff8c  {{ proyecto.used_budget_percentage|floatformat:0 }}%); height: 100%; border-radius: 10px;"></div>
+                                            </div>                                            
+                                          </li>                                          
                                         <li class="list-group-item border-0 bg-transparent text-distant-horizon"><span
-                                                class="fw-bold">Estado: </span>{{ proyecto.status }}</li>
+                                            class="fw-bold">Estado: </span>{{ proyecto.status }}
+                                        </li>
                                     </ul>
                                 </div>
                                 <hr>
@@ -689,6 +685,7 @@ button.btnStatus {
         const url = `{% url 'eliminar_tarea' 0 %}`.replace('0', tareaId);  // Reemplaza '0' con el tarea_id real
         window.location.href = url;
     });
+    
 
 </script>
 

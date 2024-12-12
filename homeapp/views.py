@@ -152,13 +152,11 @@ def proyectos_info(request):
     usuarios = ProjectEmployee.objects.all()
     status_list = StatusTask.objects.all()
 
-    
-
-    if (usuario_actual.is_employee):
+    # Verificar si el usuario es un empleado o un administrador
+    if usuario_actual.is_employee:
         try:
             proyectos = Project.objects.filter(projectemployee__employee=usuario_actual)
         except Employee.DoesNotExist:
-            # Manejo del caso en el que no exista un Employee asociado al usuario
             proyectos = []
     else:
         show_link = True
@@ -166,9 +164,32 @@ def proyectos_info(request):
             company = usuario_actual.company
             proyectos = Project.objects.filter(company=company)
         except Employee.DoesNotExist:
-            # Manejo del caso en el que no exista un Employee asociado al usuario
             proyectos = []
-    return render(request, 'proyectos.html', {'proyectos': proyectos, 'usuario_actual': usuario_actual,'tareas' : tareas , 'roles': roles,'show_link': show_link, 'usuarios': usuarios, 'status_list': status_list})
+
+    
+    for proyecto in proyectos:
+        if proyecto.budget > 0:
+            used_budget = proyecto.budget - proyecto.remaining_budget
+            used_budget_percentage = (used_budget / proyecto.budget) * 100
+            remaining_budget_percentage = (proyecto.remaining_budget / proyecto.budget) * 100
+        else:
+            used_budget_percentage = 0
+            remaining_budget_percentage = 0
+
+        proyecto.used_budget_percentage = used_budget_percentage
+        proyecto.remaining_budget_percentage = remaining_budget_percentage
+
+
+    return render(request, 'proyectos.html', {
+        'proyectos': proyectos, 
+        'usuario_actual': usuario_actual,
+        'tareas': tareas, 
+        'roles': roles,
+        'show_link': show_link, 
+        'usuarios': usuarios, 
+        'status_list': status_list
+    })
+
 
 @login_required
 def actualizar_perfil(request):

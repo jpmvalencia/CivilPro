@@ -10,7 +10,7 @@ class SignupUsuTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.url = reverse('signup_usu')
-        self.degree = Degree.objects.create(name="Bachelor")
+        self.degree = Degree.objects.create(name="Master en python")
 
     def test_signup_usu_get(self):
         response = self.client.get(self.url)
